@@ -1,18 +1,20 @@
 {
   stdenv,
   gnucobol,
+  regina,
   gcc
 }: stdenv.mkDerivation {
   name = "status";
   buildInputs = [
     gnucobol.bin
+    regina
     gcc
   ];
 
   src = ./.;
 
   buildPhase = ''
-    cobc -x ./main.cbl
+    regina build.rexx
   '';
   installPhase = ''
     mkdir -p $out/bin
