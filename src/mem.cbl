@@ -1,0 +1,12 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DMEM.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 WS-CALLBACK PROCEDURE-POINTER.
+       PROCEDURE DIVISION.
+           SET WS-CALLBACK TO ENTRY 'DMEMHOOK'.
+           CALL
+               'OUTPUT_FMT' USING
+               0 WS-CALLBACK "ffffff"
+           END-CALL
+           GOBACK.
