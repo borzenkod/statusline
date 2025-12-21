@@ -11,7 +11,7 @@
                'getloadavg' USING
                BY REFERENCE LOAD BY VALUE 3
            END-CALL
-           DISPLAY LOAD1 " " LOAD5 " " LOAD15
+           DISPLAY LOAD1 " " LOAD5 " " LOAD15 WITH NO ADVANCING
 
            GOBACK.
            
