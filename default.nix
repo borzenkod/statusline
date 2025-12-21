@@ -1,11 +1,9 @@
 {
+  pkgs,
   stdenv,
-  gnucobol,
-  regina,
-  gcc
 }: stdenv.mkDerivation {
   name = "status";
-  buildInputs = [
+  buildInputs = with pkgs; [
     gnucobol.bin
     regina
     gcc

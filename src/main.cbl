@@ -29,6 +29,7 @@
        LoopInner.
 
            DISPLAY "["
+           CALL 'DLOAD'
            CALL 'DDATE'
            CALL 'DTIME'
            DISPLAY "],"
