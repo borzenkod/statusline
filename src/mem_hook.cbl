@@ -16,6 +16,7 @@
        01 WS-RAM-TOTAL      PIC 9(10) USAGE COMP.
        01 WS-RAM-FREE       PIC 9(10) USAGE COMP.
        01 WS-RAM-AVAILABLE  PIC 9(10) USAGE COMP.
+       01 WS-RAM-USED       PIC 9(10) USAGE COMP.
        01 TMP               PIC 9(10).
 
        PROCEDURE DIVISION.
@@ -29,11 +30,9 @@
                END-READ
            END-PERFORM
            CLOSE MEM
-           DISPLAY "T: " WITH NO ADVANCING
-           MOVE WS-RAM-TOTAL TO TMP
-           PERFORM PrintHuman
-           DISPLAY " F: " WITH NO ADVANCING
-           MOVE WS-RAM-FREE TO TMP
+           COMPUTE WS-RAM-USED = WS-RAM-TOTAL - WS-RAM-AVAILABLE
+           DISPLAY "U: " WITH NO ADVANCING
+           MOVE WS-RAM-USED TO TMP
            PERFORM PrintHuman
            DISPLAY " A: " WITH NO ADVANCING
            MOVE WS-RAM-AVAILABLE TO TMP
