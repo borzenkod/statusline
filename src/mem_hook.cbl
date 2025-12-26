@@ -37,6 +37,7 @@
            DISPLAY " A: " WITH NO ADVANCING
            MOVE WS-RAM-AVAILABLE TO TMP
            PERFORM PrintHuman
+           DISPLAY " " WITH NO ADVANCING
            GOBACK.
        
        check.
@@ -71,10 +72,10 @@
 
            DISPLAY TMP(8:3) WITH NO ADVANCING
            EVALUATE WS-BIT-SIZE
-               WHEN 1 DISPLAY "KiB" WITH NO ADVANCING
-               WHEN 2 DISPLAY "MiB" WITH NO ADVANCING
-               WHEN 3 DISPLAY "GiB" WITH NO ADVANCING
-               WHEN 4 DISPLAY "TiB" WITH NO ADVANCING
+               WHEN 1 DISPLAY " KiB" WITH NO ADVANCING
+               WHEN 2 DISPLAY " MiB" WITH NO ADVANCING
+               WHEN 3 DISPLAY " GiB" WITH NO ADVANCING
+               WHEN 4 DISPLAY " TiB" WITH NO ADVANCING
                WHEN OTHER DISPLAY "b" WITH NO ADVANCING
            END-EVALUATE.
            

@@ -1,5 +1,6 @@
+#!/usr/bin/env regina
 
-files = "src/main.cbl src/output.cbl"
+files = "src/main.cbl src/output.cbl src/auto-detect.cbl"
 files = files "src/time_hook.cbl"
 files = files "src/date_hook.cbl"
 files = files "src/load_hook.cbl"
