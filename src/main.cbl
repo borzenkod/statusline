@@ -15,6 +15,11 @@
 
        LoopInner.
            CALL 'OUTPUT_FMT' USING WS-TYPE 0 0 2
+           SET WS-CALLBACK TO ENTRY 'DBATTHOOK'.
+           CALL
+               'OUTPUT_FMT' USING
+               WS-TYPE WS-CALLBACK "ff0f0f" 3
+           END-CALL
            SET WS-CALLBACK TO ENTRY 'DMEMHOOK'.
            CALL
                'OUTPUT_FMT' USING
