@@ -7,7 +7,7 @@ files = files "src/load_hook.cbl"
 files = files "src/mem_hook.cbl"
 
 say "Compiling COBOL files: " files
-"cobc" "-x" files
+"cobc" "-x" files ""
 
 if rc = 0 then
     say "Compile successful"
