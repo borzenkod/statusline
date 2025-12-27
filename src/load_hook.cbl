@@ -14,6 +14,4 @@
            END-CALL
            MOVE LOAD1 TO DIS.
            DISPLAY DIS WITH NO ADVANCING 
-
            GOBACK.
-           

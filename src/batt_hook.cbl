@@ -19,21 +19,18 @@
          88 CHARGING        VALUE 1.
          88 CHARGED         VALUE 2.
        01 TMP               PIC 9(10).
-
        PROCEDURE DIVISION.
+           MOVE 'N' TO end-of-file
            OPEN INPUT BAT
            PERFORM UNTIL end-of-file = 'Y'
                READ BAT INTO FD-LINE
-                   AT END
-                       MOVE 'Y' TO end-of-file
-                   NOT AT END
-                       PERFORM check
+                   AT END MOVE 'Y' TO end-of-file
+                   NOT AT END PERFORM check
                END-READ
            END-PERFORM
            CLOSE BAT
-           DISPLAY "B: " WS-CAPACITY " " WITH NO ADVANCING
+           DISPLAY "B: " WS-CAPACITY WITH NO ADVANCING
            GOBACK.
-
        check.
            IF FD-LINE(1:22) = "POWER_SUPPLY_CAPACITY="
                MOVE FD-LINE(23:) TO WS-LINE

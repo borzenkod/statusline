@@ -8,11 +8,8 @@
        Main.
            CALL 'AUTO-DETECT' USING BY REFERENCE WS-TYPE END-CALL
            CALL 'OUTPUT_FMT' USING WS-TYPE 0 0 1
-           PERFORM UNTIL 1<0 
-               PERFORM LoopInner
-           END-PERFORM
+           PERFORM LoopInner UNTIL 1<0
            STOP RUN.
-
        LoopInner.
            CALL 'OUTPUT_FMT' USING WS-TYPE 0 0 2
            SET WS-CALLBACK TO ENTRY 'DBATTHOOK'.
@@ -41,7 +38,5 @@
                WS-TYPE WS-CALLBACK "ffff0f" 3
            END-CALL
            CALL 'OUTPUT_FMT' USING WS-TYPE 0 0 4
-
            CONTINUE AFTER 1 SECONDS
-
            EXIT PARAGRAPH.

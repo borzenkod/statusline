@@ -20,4 +20,3 @@
            DISPLAY WS-CURRENT-MONTH, "/" WITH NO ADVANCING
            DISPLAY WS-CURRENT-YEAR  WITH NO ADVANCING
            GOBACK.
-           

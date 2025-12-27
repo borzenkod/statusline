@@ -20,7 +20,6 @@
            10 R       PIC IS X(2).
            10 G       PIC IS X(2).
            10 B       PIC IS X(2).
-
       * PART:
       * 1: Header
       * 2: BodyStart
@@ -36,7 +35,6 @@
              WHEN OTHER CONTINUE
            END-EVALUATE
            GOBACK.
-
        Header.
            IF L-TYPE = 0
              DISPLAY "{ " QUOTE "version" QUOTE ": 1 }"
@@ -61,7 +59,6 @@
              WHEN 1 DISPLAY " "
            END-EVALUATE
            EXIT PARAGRAPH.
-
        i3.
            DISPLAY "{"
            DISPLAY QUOTE "full_text" QUOTE ": " QUOTE WITH NO ADVANCING
@@ -70,7 +67,7 @@
            DISPLAY QUOTE "color" QUOTE ": " QUOTE "#" COLOR-HEX QUOTE
            DISPLAY "},"
            EXIT PARAGRAPH.
-        term.
+       term.
            DISPLAY X'1B' "[38;2;" WITH NO ADVANCING
            MOVE R TO HEX
            PERFORM Hex2TMP
@@ -85,7 +82,6 @@
            DISPLAY X'1B' "[0m" WITH NO ADVANCING
            DISPLAY " " WITH NO ADVANCING
            EXIT PARAGRAPH.
-
        Hex2TMP.
            MOVE 0 TO TMP
            PERFORM VARYING WS-IDX FROM 1 BY 1 UNTIL WS-IDX > 2
@@ -101,4 +97,3 @@
              COMPUTE TMP = TMP * 16 + CURRENT-DEC
            END-PERFORM
            EXIT PARAGRAPH.
-
