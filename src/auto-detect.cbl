@@ -64,5 +64,5 @@
                  MOVE 1 TO TMP
              END-READ
            END-PERFORM
-           IF NAME(1:2) = "sh" PERFORM ParseParen.
            CLOSE PPID-FD.
+           IF NAME(1:2) = "sh" PERFORM ParseParen.
