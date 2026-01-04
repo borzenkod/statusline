@@ -3,7 +3,7 @@
            CLOSE CONFIG-FILE
            GO TO Find-Config-File-End
        ELSE IF WS-FILE-NOT-FOUND
-           NEXT SENTENCE
+           DISPLAY " " WITH NO ADVANCING
        ELSE
            DISPLAY "ERROR : CANNOT OPEN CONFIG FILE"
            DISPLAY "FILE  : " FUNCTION TRIM(WS-CONFIG-PATH)
