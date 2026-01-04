@@ -20,6 +20,7 @@
        01 TMP               PIC 9(10).
        PROCEDURE DIVISION.
            OPEN INPUT MEM
+           MOVE 'N' TO end-of-file
            PERFORM UNTIL end-of-file = 'Y'
                READ MEM INTO FD-LINE
                    AT END MOVE 'Y' TO end-of-file
