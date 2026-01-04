@@ -166,6 +166,8 @@
                SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DDATEHOOK'
              WHEN "TIME"
                SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DTIMEHOOK'
+             WHEN "SYSTEM"
+               SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DSYSHOOK'
              WHEN OTHER
                DISPLAY "MODULE: " QUOTE WS-CONFIG-NAME QUOTE
                        "NOT FOUND"

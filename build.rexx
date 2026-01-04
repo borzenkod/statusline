@@ -6,6 +6,7 @@ files = files "src/date_hook.cbl"
 files = files "src/load_hook.cbl"
 files = files "src/mem_hook.cbl"
 files = files "src/batt_hook.cbl"
+files = files "src/system_hook.cbl"
 
 say "Compiling COBOL files: " files
 "cobc" "-x" files ""
