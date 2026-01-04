@@ -26,7 +26,8 @@
       * 3: Body
       * 4: BodyEnd
        01 L-PART      PIC IS 9.
-       PROCEDURE DIVISION USING L-TYPE L-TEXT L-COLOR L-PART.
+       01 L-BODY      PIC IS X(71).
+       PROCEDURE DIVISION USING L-TYPE L-TEXT L-COLOR L-BODY L-PART.
            EVALUATE L-PART
              WHEN 1 PERFORM Header
              WHEN 2 PERFORM BodyStart
@@ -62,7 +63,7 @@
        i3.
            DISPLAY "{"
            DISPLAY QUOTE "full_text" QUOTE ": " QUOTE WITH NO ADVANCING
-           CALL L-TEXT.
+           CALL L-TEXT USING L-BODY.
            DISPLAY QUOTE ","
            DISPLAY QUOTE "color" QUOTE ": " QUOTE "#" COLOR-HEX QUOTE
            DISPLAY "},"
@@ -78,7 +79,7 @@
            MOVE B TO HEX
            PERFORM Hex2TMP
            DISPLAY TMP "m" WITH NO ADVANCING
-           CALL L-TEXT.
+           CALL L-TEXT USING L-BODY.
            DISPLAY X'1B' "[0m" WITH NO ADVANCING
            DISPLAY " " WITH NO ADVANCING
            EXIT PARAGRAPH.

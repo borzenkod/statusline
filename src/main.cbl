@@ -34,7 +34,7 @@
        01 WS-MODULE-TABLE.
          05 WS-MODULE OCCURS 10 TIMES INDEXED BY MOD-IDX.
            10 WS-MOD-POINTER           PROCEDURE-POINTER.
-           10 WS-MOD-BODY              PIC IS X(58).
+           10 WS-MOD-BODY              PIC IS X(71).
            10 WS-MOD-COLOR             PIC IS X(6).
        01 WS-MODULES-LOADED            PIC IS 99.
       /
@@ -124,18 +124,18 @@
              END-READ
            END-PERFORM.
        Main.
-           CALL 'OUTPUT_FMT' USING WS-TYPE 0 0 1
+           CALL 'OUTPUT_FMT' USING WS-TYPE 0 0 0 1
            PERFORM LoopInner UNTIL 1<0
            STOP RUN.
        LoopInner.
-           CALL 'OUTPUT_FMT' USING WS-TYPE 0 0 2
+           CALL 'OUTPUT_FMT' USING WS-TYPE 0 0 0 2
            PERFORM VARYING MOD-IDX FROM 1 BY 1
                UNTIL MOD-IDX > WS-MODULES-LOADED
                CALL 'OUTPUT_FMT' USING WS-TYPE WS-MOD-POINTER(MOD-IDX)
-               WS-MOD-COLOR(MOD-IDX) 3
+               WS-MOD-COLOR(MOD-IDX) WS-MOD-BODY(MOD-IDX) 3
            END-PERFORM
 
-           CALL 'OUTPUT_FMT' USING WS-TYPE 0 0 4
+           CALL 'OUTPUT_FMT' USING WS-TYPE 0 0 0 4
            CONTINUE AFTER WS-UPDATE-INTERVAL SECONDS
            EXIT PARAGRAPH.
        Process-Config-Line.
