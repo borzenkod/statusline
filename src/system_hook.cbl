@@ -1,9 +1,30 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DSYSHOOK.
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT SYSTEM-COMMAND-FILE  ASSIGN TO DYNAMIC WS-TEMP-FILE
+                                       ORGANIZATION IS LINE SEQUENTIAL.
        DATA DIVISION.
+       FILE SECTION.
+       FD SYSTEM-COMMAND-FILE.
+       01 SYSTEM-COMMAND-LINE          PICTURE IS X(1024).
        WORKING-STORAGE SECTION.
+       01 WS-TEMP-FILE                 PICTURE IS X(512)
+                                       VALUE   IS "/tmp/STATUS-CBL-OUT".
+       01 COMMAND-BODY                 PICTURE IS X(128).
        LINKAGE SECTION.
-       01 L-BODY                  PIC X(71).
+       01 L-BODY                       PIC X(71).
        PROCEDURE DIVISION USING L-BODY.
-           CALL 'SYSTEM' USING L-BODY.
+           STRING L-BODY DELIMITED BY SIZE " > "
+             WS-TEMP-FILE INTO COMMAND-BODY
+           END-STRING
+           CALL 'SYSTEM' USING COMMAND-BODY.
+           OPEN INPUT SYSTEM-COMMAND-FILE
+           READ SYSTEM-COMMAND-FILE
+             AT END GOBACK
+             NOT AT END DISPLAY FUNCTION TRIM(SYSTEM-COMMAND-LINE)
+               WITH NO ADVANCING
+           END-READ
+           CLOSE SYSTEM-COMMAND-FILE
            GOBACK.
