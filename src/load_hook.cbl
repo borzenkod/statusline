@@ -6,7 +6,7 @@
            05 LOAD1  USAGE COMP-2. 
            05 LOAD5  USAGE COMP-2. 
            05 LOAD15 USAGE COMP-2. 
-       01 DIS PIC IS 9.99.
+       01 DIS PIC IS 99.99.
        PROCEDURE DIVISION.
            CALL
                'getloadavg' USING
