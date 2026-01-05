@@ -3,7 +3,7 @@
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-           SELECT CONFIG-FILE          ASSIGN TO WS-CONFIG-PATH
+           SELECT CONFIG-FILE          ASSIGN USING WS-CONFIG-PATH
                                        FILE STATUS IS WS-CONFIG-STATUS
                                        ORGANIZATION IS LINE SEQUENTIAL.
        DATA DIVISION.
@@ -36,7 +36,7 @@
            10 WS-MOD-POINTER           PROCEDURE-POINTER.
            10 WS-MOD-BODY              PIC IS X(71).
            10 WS-MOD-COLOR             PIC IS X(6).
-       01 WS-MODULES-LOADED            PIC IS 99.
+       01 WS-MODULES-LOADED            PIC IS 99 VALUE 00.
       /
        01  WS-ENV-VARS.
          05  WS-HOME-DIR               PIC X(256).
@@ -44,7 +44,7 @@
          05  WS-STATUSLINE-CONFIG      PIC X(256).
 
        01 WS-CALLBACK                  PROCEDURE-POINTER.
-       01 WS-TYPE                      PIC IS 9 VALUE IS 9.
+       01 WS-TYPE                      PIC IS 9 VALUE IS 1.
        PROCEDURE DIVISION.
        Initialize-Program.
            CALL 'AUTO-DETECT' USING BY REFERENCE WS-TYPE END-CALL.
@@ -136,7 +136,7 @@
            END-PERFORM
 
            CALL 'OUTPUT_FMT' USING WS-TYPE 0 0 0 4
-           CONTINUE AFTER WS-UPDATE-INTERVAL SECONDS
+           CALL 'C$SLEEP' USING WS-UPDATE-INTERVAL
            EXIT PARAGRAPH.
        Process-Config-Line.
            IF WS-TYPE-COMMENT OR WS-CONFIG-LINE = SPACES

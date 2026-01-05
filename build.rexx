@@ -9,7 +9,7 @@ files = files "src/batt_hook.cbl"
 files = files "src/system_hook.cbl"
 
 say "Compiling COBOL files: " files
-"cobc" "-x" files "-O3"
+"cobc" "-x" files "-O3 -std=ibm"
 
 if rc = 0 then
     say "Compile successful"

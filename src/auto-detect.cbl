@@ -3,43 +3,44 @@
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-           SELECT PPID-FD ASSIGN TO PPID-FILE
-           ORGANIZATION IS SEQUENTIAL.
+           SELECT PPID-FD              ASSIGN USING PPID-FILE
+                                       ORGANIZATION IS SEQUENTIAL.
        DATA DIVISION.
        FILE SECTION.
        FD PPID-FD.
-       01 FD-LINE      PIC IS X(200).
+       01 FD-LINE                      PICTURE IS X(200).
        WORKING-STORAGE SECTION.
-       01 PPID-FILE PIC IS X(50).
-       01 PPID      USAGE INDEX.
-       01 TMP       PIC IS 9.
-       01 PPID-SIZE PIC IS 9.
-       01 NAME      PIC IS X(30).
+       77 PPID-FILE                    PICTURE IS X(50) VALUE SPACES.
+       01 PPID                         USAGE INDEX.
+       01 TMP                          PICTURE IS 9.
+       01 PPID-SIZE                    PICTURE IS 9.
+       01 NAME                         PICTURE IS X(30).
        LINKAGE SECTION.
-       01 L-TYPE    PIC IS 9.
+       01 L-TYPE                       PICTURE IS 9.
        PROCEDURE DIVISION USING L-TYPE.
        Main.
-           CALL 'isatty' USING 0 RETURNING TMP
+           CALL 'isatty'               USING 0 RETURNING TMP
            IF TMP = 1
              MOVE 1 TO L-TYPE
              GOBACK
            END-IF
-           CALL 'getppid' RETURNING PPID
+           CALL 'getppid'              RETURNING PPID
            PERFORM ParseParen.
-           MOVE 1 TO L-TYPE
+           SET L-TYPE                  TO 1
            IF NAME(1:5) = "i3bar"
-             MOVE 0 TO L-TYPE
+             SET L-TYPE                TO 0
            END-IF
            IF NAME(1:7) = "swaybar"
-             MOVE 0 TO L-TYPE
+             SET L-TYPE                TO 0
            END-IF
            GOBACK.
         ParseParen.
+           SET PPID-FILE               TO SPACES
            PERFORM UNTIL PPID = 0
              MOVE FUNCTION MOD(PPID, 10) TO TMP
              COMPUTE PPID = PPID / 10
              STRING PPID-FILE DELIMITED BY SPACE
-               TMP DELIMITED BY SIZE
+               TMP
                INTO PPID-FILE
              END-STRING
            END-PERFORM
