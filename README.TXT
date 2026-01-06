@@ -1,61 +1,152 @@
-===============================================================================
-             ____ _____  _  _____ _   _ ____  _     ___ _   _ _____ 
-            / ___|_   _|/ \|_   _| | | / ___|| |   |_ _| \ | | ____|
-            \___ \ | | / _ \ | | | | | \___ \| |    | ||  \| |  _|  
-             ___) || |/ ___ \| | | |_| |___) | |___ | || |\  | |___ 
-            |____/ |_/_/   \_\_|  \___/|____/|_____|___|_| \_|_____|
+========================================================================
+         ____ _____  _  _____ _   _ ____  _     ___ _   _ _____
+        / ___|_   _|/ \|_   _| | | / ___|| |   |_ _| \ | | ____|
+        \___ \ | | / _ \ | | | | | \___ \| |    | ||  \| |  _|
+         ___) || |/ ___ \| | | |_| |___) | |___ | || |\  | |___
+        |____/ |_/_/   \_\_|  \___/|____/|_____|___|_| \_|_____|
 
-===============================================================================
+========================================================================
 
-SIMPLE STATUS LINE WRITTEN IN THE BEST PROGRAMMING LANGUAGE EVER
+                         + TABLE OF CONTENTS +
 
-TODO:
-- [X] DISPLAY TIME
-- [X] DISPLAY LOAD
-- [X] DISPLAY MEMORY
-- [X] DISPLAY BATTERY
-- [ ] DISPLAY NETWORKING
+1. PREFACE . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1
+2. CONFIGURATION . . . . . . . . . . . . . . . . . . . . . . . . . . . 1
+   2.1. COMMON DSN . . . . . . . . . . . . . . . . . . . . . . . . . . 2
+   2.2. GENERAL STRUCTURE OF THE CONFIGURATION RECORD  . . . . . . . . 2
+   2.3. LIST OF SUPPORTED COMMANDS . . . . . . . . . . . . . . . . . . 3
+   2.4. LIST OF SUPPORTED MODULES  . . . . . . . . . . . . . . . . . . 3
+3. COMPILING THE PROJECT . . . . . . . . . . . . . . . . . . . . . . . 4
+   3.1. LIST OF SUPPORTED STANDARDS  . . . . . . . . . . . . . . . . . 4
+   3.2. COMPILING THE PROJECT  . . . . . . . . . . . . . . . . . . . . 4
+      3.2.1. COMPILING USING NIX . . . . . . . . . . . . . . . . . . . 4
+4. HACKING . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4
+   4.1. KNOWN ISSUES . . . . . . . . . . . . . . . . . . . . . . . . . 5
+      4.1.1. Y2K . . . . . . . . . . . . . . . . . . . . . . . . . . . 5
+   4.2. TO DO LIST . . . . . . . . . . . . . . . . . . . . . . . . . . 5
 
-================================================================================
-===== CONFIGURATION:
+========================================================================
+==============================  PREFACE  ===============================
 
-STATUSLINE LOOKS IN THE FOLLOWING PLACES IN THE ORDER OF PREFERENCE:
+   SIMPLE STATUS LINE WRITTEN IN THE BEST PROGRAMMING LANGUAGE EVER.
+
+========================================================================
+===========================  CONFIGURATION  ============================
+
+/
+
+===== COMMON DATA SET NAME
+
+STATUSLINE-COB LOOKS FOR THE CONFIGURATION DATA SET IN THE FOLLOWING
+LOCATIONS:
 - ./STATUSLINE-COB.CFG
 - $XDG_CONFIG_HOME/STATUSLINE-COB/CONFIG.CFG
 - $HOME/.config/STATUSLINE-COB/CONFIG.CFG
 - $HOME/.STATUSLINE-COB.CFG
 - /etc/STATUSLINE/STATUSLINE.CFG
 - /etc/STATUSLINE-COB.CFG
+IF THE CDS IS NOT FOUND IN CDSNS, THE STATUSLINE-COB LOADS THE DEFAULT
+CONFIGURATION (SEE 2.2).
 
-CONFIG FILE IS LINE SEQUENTIAL DATA SET WITH RECORDS HAVING FOLLOWING STRUCTURE:
-- FIRST 8 BYTES SPECIFIES THE COMMAND AND CAN BE EITHER
-  + `********` FOR A COMMENT. ALL CONTENT FURTHER IS IGNORED
-  + `GENERAL ` FOR A GENERAL CONFIGURATION SECTION
-  + `MODULE  ` TO ADD MODULE
-- SPACE
-- NEXT 12 BYTES SPECIFIES THE NAME FOR THE MODULE.
-- SPACE
-- COLOR 6 BYTES FOR RRGGBB VALUES
-- SPACE
-- NEXT 71 BYTES SPECIFY USER DEFINED DATA
+===== GENERAL STRUCTURE OF THE CONFIGURATIONAL RECORD
 
-================================================================================
-===== MODULES: ARGUMENTS ARE GENERALLY A SPACE SEPARATED LIST
-- `SYSTEM      ` ARGS: 1
-  + THE COMMAND THAT YOU WANT EXECUTE
-- `BATTERY     ` ARGS: 0
-- `MEMORY      ` ARGS: 0
-- `LOAD        ` ARGS: 0
-- `DATE        ` ARGS: 1
-  + THE CENTURY SELECTOR, EITHER: "Y2K", "Y2.1K" OR "Y2.2K"
-- `TIME        ` ARGS: 0
+CDNS ARE LINE SEQUENTIAL DATA SETS WITH RECORDS HAVING THE FOLLOWING
+STRUCTURE:
+- THE FIRST 8 BYTES SPECIFY THE COMMAND (SEE 2.3 FOR LIST OF COMMANDS)
+- RESERVED 1 BYTE.
+- NEXT 12 BYTES SPECIFY THE NAME FOR THE MODULE (SEE 2.4)
+- PADDING 1 BYTE.
+- 6 BYTES FOR RRGGBB COLOR VALUES IN HEXADECIMAL FORMAT.
+- PADDING 1 BYTE.
+- NEXT 71 BYTES SPECIFY USER-DEFINED DATA (SEE 2.4).
+
+/
+
+===== LIST OF SUPPORTED COMMANDS
+
+STATUSLINE-COB SUPPORTS THE FOLLOWING LIST OF COMMANDS:
+- '********' COMMENT COMMAND IS USED FOR MARKING THE RECORD AS COMMENT.
+             THE REST OF THE RECORD IS SIMPLY IGNORED.
+- 'GENERAL ' GENERAL COMMAND USED FOR SPECIFYING GLOBAL SETTINGS SUCH AS
+             TIME FORMAT AND POLLING INTERVAL. THE COLOR AND NAME
+             COLUMNS ARE IGNORED. HAS THE FOLLOWING FORMAT:
+             - FIRST 3 BYTES IS USED FOR TIME FORMAT AND CAN BE EITHER:
+               '24H' OR '12H'.
+             - PADDING 1 BYTE
+             - NEXT 3 NUMBERS SPECIFY POLLING INTERVAL
+- 'MODULE  ': MODULE COMMAND USED FOR ADDING MODULES FOR A STATUSLINE.
+              FOR A MORE DETAILED MODULE SPECIFICATION, SEE 2.4.
 
 
-================================================================================
-===== LIST OF SUPPORTED STANDARDS:
-- GnuCOBOL/OpenCOBOL
-- IBM COBOL
+===== LIST OF SUPPORTED MODULES
 
-================================================================================
-===== KNOWN ISSUES:
-- Y2.1K (WOULD FIX LATER)
+STATUSLINE-COB SUPPORTS THE FOLLOWING MODULES:
+- `SYSTEM      ` SYSTEM MODULE IS USED FOR RUNNING EXTERNAL COMMAND.
+                 INTERNALLY IMPLEMENTED BY POSTFIXING THE USER SECTION
+                 WITH PIPING OPERATOR TO A TEMPORARY FILE.
+- `BATTERY     ` BATTERY MODULE OUTPUTS THE CURRENT BATTERY PERCENTAGE
+                 DOES NOT ACCEPT ARGUMENTS AND THE CONTENT OF THE USER
+                 SECTION IS SIMPLY IGNORED.
+- `MEMORY      ` MEMORY MODULE OUTPUTS THE CURRENT MEMORY USAGE AND ALL
+                 OF THE AVAILABLE MEMORY. DOES NOT ACCEPT ARGUMENTS AND
+                 THE CONTENT OF THE USER SECTION IS SIMPLY IGNORED.
+- `LOAD        ` LOAD MODULE OUTPUTS THE CURRENT ONE MINUTE LOAD. DOES
+                 NOT ACCEPT ARGUMENTS AND THE CONTENT OF THE USER
+                 SECTION IS SIMPLY IGNORED.
+- `DATE        ` DATE MODULE OUTPUTS THE CURRENT DATE IN THE FORMAT OF
+                 DD/MM/CCYY. FOR THE KNOWN ISSUES, SEE 4.1.1. ACCEPT THE
+                 CENTURY SELECTOR AS A TEMPORARY FIX OF THE CURRENT
+                 ISSUES.
+- `TIME        ` TIME MODULE OUTPUTS THE CURRENT TIME IN THE FORMAT OF
+                 HH:MM:SS. DOES NOT ACCEPT ARGUMENTS AND THE CONTENT OF
+                 THE USER SECTION IS SIMPLY IGNORED
+
+/
+
+========================================================================
+=======================  COMPILING THE PROJECT  ========================
+
+===== LIST OF SUPPORTED STANDARDS
+
+CURRENTLY, STATUSLINE-COB IS WRITTEN IN GNU COBOL WITH IBM COBOL
+STANDARD FLAG.
+
+===== COMPILING THE PROJECT
+
+THE STATUSLINE-COB IS COMPILED USING THE BUILD.REXX FILE LOCATED IN THE
+ROOT OF THE PROJECT. EXAMINE THE SCRIPT IN CASE YOU WISH TO COMPILE THE
+PROJECT MANUALLY WITH COMPILER THAT IS DIFFERENT FROM A GNU COBOL.
+
+DEPENDENCY OF STATUSLINE-COB:
+- COBOL RUNTIME
+- LIBC
+- LINUX
+YOU ALSO WOULD NEED A REXX INTERPRETER FOR RUNNING THE COMPILATION 
+SCRIPT.
+
+=== COMPILING USING NIX
+
+IF IT HAPPENS SO THAT YOU CAN COMPILE THE PROJECT USING NIX THE PACKAGE
+MANAGER YOU CAN USE THE FLAKE OR THE DEFAULT.NIX FILE PLACED IN THE ROOT
+OF THE PROJECT.
+
+========================================================================
+==============================  HACKING  ===============================
+
+THIS SECTION IS MEANT FOR ADVANCED USERS WHO WISH TO CUSTOMIZE THE
+STATUSLINE-COB TO SUIT THEIR NEEDS MORE AND HELP THE PROJECT.
+
+/
+
+===== KNOWN ISSUES
+
+=== Y2K
+THE DATE MODULE HAS A Y2K BUG, AND AS A TEMPORARY FIX YOU NEED TO
+SPECIFY EITHER 'Y2K', 'Y2.1K' or 'Y2.2K'.
+
+===== TO DO LIST
+- (X) DISPLAY TIME
+- (X) DISPLAY LOAD
+- (X) DISPLAY MEMORY
+- (X) DISPLAY BATTERY
+- ( ) DISPLAY NETWORKING
+- ( ) ADD MORE CONFIGURATION OPTIONS
