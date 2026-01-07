@@ -1,6 +1,12 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. MAIN.
        ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. teto WITH DEBUGGING MODE.
+       OBJECT-COMPUTER. you PROGRAM COLLATING SEQUENCE IS THEBEST.
+       SPECIAL-NAMES.
+           ALPHABET THEBEST IS EBCDIC
+           CRT STATUS IS WS-CRT-STATUS.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
            SELECT CONFIG-FILE          ASSIGN USING WS-CONFIG-PATH
@@ -21,7 +27,7 @@
            88 WS-TYPE-GENERAL          VALUE "GENERAL ".
            88 WS-TYPE-MODULE           VALUE "MODULE  ".
            88 WS-TYPE-COMMENT          VALUE "********".
-         05 FILLER                     PIC IS X.
+         05 WS-CONFIG-CONTROL          PIC IS X.
          05 WS-CONFIG-NAME             PIC IS X(12).
          05 FILLER                     PIC IS X.
          05 WS-CONFIG-COLOR            PIC IS X(6).
@@ -32,7 +38,7 @@
          05 WS-TIME-FORMAT             PIC IS X(3).
          05 WS-UPDATE-INTERVAL         PIC IS 9(3).
        01 WS-MODULE-TABLE.
-         05 WS-MODULE OCCURS 10 TIMES INDEXED BY MOD-IDX.
+         05 WS-MODULE  OCCURS 10 TIMES INDEXED BY MOD-IDX.
            10 WS-MOD-POINTER           PROCEDURE-POINTER.
            10 WS-MOD-BODY              PIC IS X(71).
            10 WS-MOD-COLOR             PIC IS X(6).
@@ -44,7 +50,11 @@
          05  WS-STATUSLINE-CONFIG      PIC X(256).
 
        01 WS-CALLBACK                  PROCEDURE-POINTER.
-       01 WS-TYPE                      PIC IS 9 VALUE IS 1.
+       01 WS-CLICK-EVENTS              PIC IS X(1024).
+       01 WS-CRT-STATUS                PIC IS 9999.
+           88 WS-CRT-NO-INPUT          VALUE IS 8000.
+       01 WS-TALLY                     USAGE IS BINARY-LONG.
+       01 WS-TYPE                      PIC IS 9 VALUE IS 0.
        PROCEDURE DIVISION.
        Initialize-Program.
            CALL 'AUTO-DETECT' USING BY REFERENCE WS-TYPE END-CALL.
@@ -52,10 +62,14 @@
            MOVE "24H" TO WS-TIME-FORMAT
            MOVE 1 TO WS-UPDATE-INTERVAL.
        Find-Config-File.
-           ACCEPT WS-HOME-DIR FROM ENVIRONMENT "HOME"
-           ACCEPT WS-XDG-CONFIG-HOME FROM ENVIRONMENT "XDG_CONFIG_HOME"
+           ACCEPT WS-HOME-DIR          FROM ENVIRONMENT"HOME"
+           ACCEPT WS-XDG-CONFIG-HOME   FROM ENVIRONMENT"XDG_CONFIG_HOME"
            ACCEPT WS-STATUSLINE-CONFIG
              FROM ENVIRONMENT "STATUSLINE_CONFIG"
+           IF WS-STATUSLINE-CONFIG NOT = SPACES
+             SET WS-CONFIG-PATH        TO WS-STATUSLINE-CONFIG
+             COPY "src/check.cpy".
+           END-IF
            SET WS-CONFIG-PATH          TO "./STATUSLINE-COB.CFG"
            COPY "src/check.cpy".
            IF WS-XDG-CONFIG-HOME NOT = SPACES
@@ -135,11 +149,16 @@
                WS-MOD-COLOR(MOD-IDX) WS-MOD-BODY(MOD-IDX) 3
            END-PERFORM
 
+           IF WS-CRT-NO-INPUT
+             ACCEPT WS-CLICK-EVENTS
+           END-IF
+
            CALL 'OUTPUT_FMT' USING WS-TYPE 0 0 0 4
            CALL 'C$SLEEP' USING WS-UPDATE-INTERVAL
            EXIT PARAGRAPH.
        Process-Config-Line.
-           IF WS-TYPE-COMMENT OR WS-CONFIG-LINE = SPACES
+           IF WS-TYPE-COMMENT OR WS-CONFIG-LINE = SPACES OR
+             WS-CONFIG-CONTROL = '*'
              EXIT PARAGRAPH
            END-IF
            EVALUATE TRUE

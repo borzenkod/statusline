@@ -38,7 +38,10 @@
            GOBACK.
        Header.
            IF L-TYPE = 0
-             DISPLAY "{ " QUOTE "version" QUOTE ": 1 }"
+             DISPLAY "{ " 
+               QUOTE "version" QUOTE ": 1, "
+               QUOTE "click_events" QUOTE ": true "
+             "}"
              DISPLAY "["
            END-IF
            EXIT PARAGRAPH.
