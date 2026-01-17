@@ -70,32 +70,36 @@
              SET WS-CONFIG-PATH        TO WS-STATUSLINE-CONFIG
              COPY "src/check.cpy".
            END-IF
+           SET WS-CONFIG-PATH          TO SPACES
            SET WS-CONFIG-PATH          TO "./STATUSLINE-COB.CFG"
            COPY "src/check.cpy".
            IF WS-XDG-CONFIG-HOME NOT = SPACES
+             SET WS-CONFIG-PATH          TO SPACES
                STRING FUNCTION TRIM(WS-XDG-CONFIG-HOME)
                       "/STATUSLINE-COB/CONFIG.CFG"
                       DELIMITED BY SIZE
                       INTO WS-CONFIG-PATH
                END-STRING
+             COPY "src/check.cpy".
            END-IF
-           COPY "src/check.cpy".
            IF WS-HOME-DIR NOT = SPACES
+             SET WS-CONFIG-PATH          TO SPACES
                STRING FUNCTION TRIM(WS-HOME-DIR)
-                      ".config/STATUSLINE-COB/CONFIG.CFG"
+                      "/.config/STATUSLINE-COB/CONFIG.CFG"
                       DELIMITED BY SIZE
                       INTO WS-CONFIG-PATH
                END-STRING
+             COPY "src/check.cpy".
            END-IF
-           COPY "src/check.cpy".
            IF WS-HOME-DIR NOT = SPACES
+             SET WS-CONFIG-PATH          TO SPACES
                STRING FUNCTION TRIM(WS-HOME-DIR)
-                      ".STATUSLINE-COB.CFG"
+                      "/.STATUSLINE-COB.CFG"
                       DELIMITED BY SIZE
                       INTO WS-CONFIG-PATH
                END-STRING
+             COPY "src/check.cpy".
            END-IF
-           COPY "src/check.cpy".
            SET WS-CONFIG-PATH        TO "/etc/STATUSLINE/STATUSLINE.CFG"
            COPY "src/check.cpy".
            SET WS-CONFIG-PATH        TO "/etc/STATUSLINE-COB.CFG"
