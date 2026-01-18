@@ -32,16 +32,18 @@
          05 FILLER                     PIC IS X.
          05 WS-CONFIG-COLOR            PIC IS X(6).
          05 FILLER                     PIC IS X.
-         05 WS-CONFIG-BODY             PIC IS X(71).
+         05 WS-CONFIG-BODY             PIC IS X(42).
       /
        01 WS-GENERAL-CONFIG.
-         05 WS-TIME-FORMAT             PIC IS X(3).
          05 WS-UPDATE-INTERVAL         PIC IS 9(3).
+         05 WS-THEME-NAME              PIC IS X(8).
+         05 WS-THEME-TYPE              PIC IS X(4).
        01 WS-MODULE-TABLE.
-         05 WS-MODULE  OCCURS 10 TIMES INDEXED BY MOD-IDX.
+         05 WS-MODULE  OCCURS 25 TIMES INDEXED BY MOD-IDX.
            10 WS-MOD-POINTER           PROCEDURE-POINTER.
            10 WS-MOD-BODY              PIC IS X(71).
-           10 WS-MOD-COLOR             PIC IS X(6).
+           10 WS-MOD-COLOR-BG          PIC IS X(8).
+           10 WS-MOD-COLOR-FG          PIC IS X(8).
        01 WS-MODULES-LOADED            PIC IS 99 VALUE 00.
       /
        01  WS-ENV-VARS.
@@ -54,13 +56,21 @@
        01 WS-CRT-STATUS                PIC IS 9999.
            88 WS-CRT-NO-INPUT          VALUE IS 8000.
        01 WS-TALLY                     USAGE IS BINARY-LONG.
-       01 WS-TYPE                      PIC IS 9 VALUE IS 0.
+       01 WS-TYPE             EXTERNAL PIC IS 9 VALUE IS 0.
+       01 BAT-end-of-file     EXTERNAL PIC X VALUE 'N'.
+       01 MEM-end-of-file     EXTERNAL PIC X VALUE 'N'.
+
+       COPY "src/output.cpy".
+       COPY "src/themes.cpy".
        PROCEDURE DIVISION.
        Initialize-Program.
            CALL 'AUTO-DETECT' USING BY REFERENCE WS-TYPE END-CALL.
        Initialize-Config.
-           MOVE "24H" TO WS-TIME-FORMAT
-           MOVE 1 TO WS-UPDATE-INTERVAL.
+           SET WS-UPDATE-INTERVAL      TO 5
+           SET WS-THEME-NAME           TO "ROSEPINE"
+           SET WS-THEME-TYPE           TO "BLCK".
+       Initialize-Themes.
+           COPY "src/themes-init.cpy"..
        Find-Config-File.
            ACCEPT WS-HOME-DIR          FROM ENVIRONMENT"HOME"
            ACCEPT WS-XDG-CONFIG-HOME   FROM ENVIRONMENT"XDG_CONFIG_HOME"
@@ -104,27 +114,14 @@
            COPY "src/check.cpy".
            SET WS-CONFIG-PATH        TO "/etc/STATUSLINE-COB.CFG"
            COPY "src/check.cpy".
-           SET MOD-IDX TO 1
-           SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DBATTHOOK'
-           SET WS-MOD-BODY(MOD-IDX)    TO SPACES
-           SET WS-MOD-COLOR(MOD-IDX)   TO "ff0f0f"
-           SET MOD-IDX TO 2
-           SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DMEMHOOK'
-           SET WS-MOD-BODY(MOD-IDX)    TO SPACES
-           SET WS-MOD-COLOR(MOD-IDX)   TO "ffffff"
-           SET MOD-IDX TO 3
-           SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DLOADHOOK'
-           SET WS-MOD-BODY(MOD-IDX)    TO SPACES
-           SET WS-MOD-COLOR(MOD-IDX)   TO "ff0fff"
-           SET MOD-IDX TO 4
-           SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DDATEHOOK'
-           SET WS-MOD-BODY(MOD-IDX)    TO SPACES
-           SET WS-MOD-COLOR(MOD-IDX)   TO "ffffff"
-           SET MOD-IDX TO 5
-           SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DTIMEHOOK'
-           SET WS-MOD-BODY(MOD-IDX)    TO SPACES
-           SET WS-MOD-COLOR(MOD-IDX)   TO "ffff0f".
-           SET WS-MODULES-LOADED       TO 5
+           ACCEPT WS-STATUSLINE-CONFIG
+             FROM ENVIRONMENT "STATUSLINE_CONFIG_END"
+           IF WS-STATUSLINE-CONFIG NOT = SPACES
+             SET WS-CONFIG-PATH        TO WS-STATUSLINE-CONFIG
+             COPY "src/check.cpy".
+           END-IF.
+       Default-Config.
+           COPY "src/default.cpy".
            GO TO Main.
        Find-Config-File-End.
            OPEN INPUT CONFIG-FILE
@@ -142,22 +139,40 @@
              END-READ
            END-PERFORM.
        Main.
-           CALL 'OUTPUT_FMT' USING WS-TYPE 0 0 0 1
+           SET L-TYPE                  TO WS-TYPE
+           SET L-TEXT                  TO NULL
+           SET L-COLOR-BG              TO '000000FF'
+           SET L-COLOR-FG              TO '000000FF'
+           SET L-PART                  TO 1
+           SET L-BODY                  TO SPACES
+           CALL 'OUTPUT_FMT'
            PERFORM LoopInner UNTIL 1<0
            STOP RUN.
        LoopInner.
-           CALL 'OUTPUT_FMT' USING WS-TYPE 0 0 0 2
+           MOVE 'N' TO BAT-end-of-file
+           MOVE 'N' TO MEM-end-of-file
+           SET L-PART                  TO 2
+           CALL 'OUTPUT_FMT'
+           SET L-PART                  TO 3
+           SET L-COLOR-BG              TO '00000000'
+           SET L-COLOR-FG              TO '00000000'
+           SET L-COLOR-BG-LAST         TO '00000000'
+           SET L-COLOR-FG-LAST         TO '00000000'
            PERFORM VARYING MOD-IDX FROM 1 BY 1
                UNTIL MOD-IDX > WS-MODULES-LOADED
-               CALL 'OUTPUT_FMT' USING WS-TYPE WS-MOD-POINTER(MOD-IDX)
-               WS-MOD-COLOR(MOD-IDX) WS-MOD-BODY(MOD-IDX) 3
+               SET L-TEXT                  TO WS-MOD-POINTER(MOD-IDX)
+               SET L-COLOR-BG              TO WS-MOD-COLOR-BG(MOD-IDX)
+               SET L-COLOR-FG              TO WS-MOD-COLOR-FG(MOD-IDX)
+               SET L-BODY                  TO WS-MOD-BODY(MOD-IDX)
+               CALL 'OUTPUT_FMT'
            END-PERFORM
 
            IF WS-CRT-NO-INPUT
              ACCEPT WS-CLICK-EVENTS
            END-IF
 
-           CALL 'OUTPUT_FMT' USING WS-TYPE 0 0 0 4
+           SET L-PART                  TO 4
+           CALL 'OUTPUT_FMT'
            CALL 'C$SLEEP' USING WS-UPDATE-INTERVAL
            EXIT PARAGRAPH.
        Process-Config-Line.
@@ -168,8 +183,12 @@
            EVALUATE TRUE
              WHEN WS-TYPE-GENERAL UNSTRING WS-CONFIG-BODY
                  DELIMITED BY ALL SPACES
-                 INTO WS-TIME-FORMAT WS-UPDATE-INTERVAL
+                 INTO WS-UPDATE-INTERVAL WS-THEME-NAME WS-THEME-TYPE
                END-UNSTRING
+               EVALUATE WS-THEME-NAME
+                   WHEN "ROSEPINE" SET THM-IDX TO 1
+                   WHEN OTHER CONTINUE
+               END-EVALUATE
              WHEN WS-TYPE-MODULE PERFORM Process-Module
              WHEN OTHER DISPLAY "WARNING: UNKNOWN MODULE TYPE: "
                                 WS-CONFIG-TYPE
@@ -191,12 +210,18 @@
                SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DTIMEHOOK'
              WHEN "SYSTEM"
                SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DSYSHOOK'
+             WHEN "SEPARATOR"
+               SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DSEPHOOK'
+             WHEN "TEXT"
+               SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DTEXTHOOK'
+             WHEN "SPACE"
+               SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DSPACEHOOK'
              WHEN OTHER
                DISPLAY "MODULE: " QUOTE WS-CONFIG-NAME QUOTE
                        "NOT FOUND"
                SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DTIMEHOOK'
                CONTINUE
            END-EVALUATE
-           SET WS-MOD-COLOR(MOD-IDX) TO WS-CONFIG-COLOR.
+           COPY "src/get-theme.cpy".
            SET WS-MOD-BODY(MOD-IDX)  TO WS-CONFIG-BODY.
            EXIT PARAGRAPH.

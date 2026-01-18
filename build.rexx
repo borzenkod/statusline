@@ -7,6 +7,9 @@ files = files "src/load_hook.cbl"
 files = files "src/mem_hook.cbl"
 files = files "src/batt_hook.cbl"
 files = files "src/system_hook.cbl"
+files = files "src/text.cbl"
+files = files "src/separator.cbl"
+files = files "src/space.cbl"
 
 say "Compiling COBOL files: " files
 "cobc" "-x" files "-O3 -std=ibm"

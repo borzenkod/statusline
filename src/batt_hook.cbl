@@ -8,28 +8,32 @@
        DATA DIVISION.
        FILE SECTION.
        FD BAT.
-       01 FD-LINE           PIC X(100).
+       01 FD-LINE                      PIC X(100).
        WORKING-STORAGE SECTION.
-       01 end-of-file       PIC X VALUE 'N'.
-       01 WS-BIT-SIZE       PIC 99.
-       01 WS-LINE           PIC X(100).
-       01 WS-CAPACITY       PIC 999.
-       01 WS-STATUS         PIC 9.
-         88 DISCHARDING     VALUE 0.
-         88 CHARGING        VALUE 1.
-         88 CHARGED         VALUE 2.
-       01 TMP               PIC 9(10).
-       PROCEDURE DIVISION.
-           MOVE 'N' TO end-of-file
+       01 BAT-end-of-file     EXTERNAL PIC X VALUE 'N'.
+       01 WS-BIT-SIZE                  PIC 99.
+       01 WS-LINE                      PIC X(100).
+       01 WS-CAPACITY                  PIC 999.
+       01 WS-STATUS                    PIC 9.
+         88 DISCHARGING                VALUE 0.
+         88 CHARGING                   VALUE 1.
+         88 CHARGED                    VALUE 2.
+       01 TMP                          PIC 9(10).
+       LINKAGE SECTION.
+       01 L-BODY                  PIC X(71).
+       PROCEDURE DIVISION USING L-BODY.
            OPEN INPUT BAT
-           PERFORM UNTIL end-of-file = 'Y'
+           PERFORM UNTIL BAT-end-of-file = 'Y'
                READ BAT INTO FD-LINE
-                   AT END MOVE 'Y' TO end-of-file
+                   AT END MOVE 'Y' TO BAT-end-of-file
                    NOT AT END PERFORM check
                END-READ
            END-PERFORM
            CLOSE BAT
-           DISPLAY "B: " WS-CAPACITY WITH NO ADVANCING
+           EVALUATE L-BODY
+               WHEN "CAPACITY" DISPLAY WS-CAPACITY WITH NO ADVANCING
+               WHEN OTHER CONTINUE
+           END-EVALUATE
            GOBACK.
        check.
            IF FD-LINE(1:22) = "POWER_SUPPLY_CAPACITY="

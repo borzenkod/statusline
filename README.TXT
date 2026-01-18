@@ -1,36 +1,38 @@
-========================================================================
+=======================================================================
          ____ _____  _  _____ _   _ ____  _     ___ _   _ _____
         / ___|_   _|/ \|_   _| | | / ___|| |   |_ _| \ | | ____|
         \___ \ | | / _ \ | | | | | \___ \| |    | ||  \| |  _|
          ___) || |/ ___ \| | | |_| |___) | |___ | || |\  | |___
         |____/ |_/_/   \_\_|  \___/|____/|_____|___|_| \_|_____|
 
-========================================================================
+=======================================================================
 
                          + TABLE OF CONTENTS +
 
-1. PREFACE . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1
-2. CONFIGURATION . . . . . . . . . . . . . . . . . . . . . . . . . . . 1
-   2.1. COMMON DSN . . . . . . . . . . . . . . . . . . . . . . . . . . 2
-   2.2. GENERAL STRUCTURE OF THE CONFIGURATION RECORD  . . . . . . . . 2
-   2.3. LIST OF SUPPORTED COMMANDS . . . . . . . . . . . . . . . . . . 3
-   2.4. LIST OF SUPPORTED MODULES  . . . . . . . . . . . . . . . . . . 3
-3. COMPILING THE PROJECT . . . . . . . . . . . . . . . . . . . . . . . 4
-   3.1. LIST OF SUPPORTED STANDARDS  . . . . . . . . . . . . . . . . . 4
-   3.2. COMPILING THE PROJECT  . . . . . . . . . . . . . . . . . . . . 4
-      3.2.1. COMPILING USING NIX . . . . . . . . . . . . . . . . . . . 4
-4. HACKING . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4
-   4.1. KNOWN ISSUES . . . . . . . . . . . . . . . . . . . . . . . . . 5
-      4.1.1. Y2K . . . . . . . . . . . . . . . . . . . . . . . . . . . 5
-   4.2. TO DO LIST . . . . . . . . . . . . . . . . . . . . . . . . . . 5
+1. PREFACE . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  1
+2. CONFIGURATION . . . . . . . . . . . . . . . . . . . . . . . . . .  1
+   2.1. COMMON DSN . . . . . . . . . . . . . . . . . . . . . . . . .  2
+   2.2. GENERAL STRUCTURE OF THE CONFIGURATION RECORD  . . . . . . .  2
+   2.3. LIST OF SUPPORTED COMMANDS . . . . . . . . . . . . . . . . .  3
+   2.4. LIST OF SUPPORTED MODULES  . . . . . . . . . . . . . . . . .  3
+   2.5. LIST OF THEMES . . . . . . . . . . . . . . . . . . . . . . .  4
+   2.6. LIST OF SUPPORTED COLORS . . . . . . . . . . . . . . . . . .  4
+3. COMPILING THE PROJECT . . . . . . . . . . . . . . . . . . . . . .  4
+   3.1. LIST OF SUPPORTED STANDARDS  . . . . . . . . . . . . . . . .  4
+   3.2. COMPILING THE PROJECT  . . . . . . . . . . . . . . . . . . .  4
+      3.2.1. COMPILING USING NIX . . . . . . . . . . . . . . . . . .  4
+4. HACKING . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  4
+   4.1. KNOWN ISSUES . . . . . . . . . . . . . . . . . . . . . . . .  5
+      4.1.1. Y2K . . . . . . . . . . . . . . . . . . . . . . . . . .  5
+   4.2. TO DO LIST . . . . . . . . . . . . . . . . . . . . . . . . .  5
 
-========================================================================
-==============================  PREFACE  ===============================
+=======================================================================
+==============================  PREFACE  ==============================
 
    SIMPLE STATUS LINE WRITTEN IN THE BEST PROGRAMMING LANGUAGE EVER.
 
-========================================================================
-===========================  CONFIGURATION  ============================
+=======================================================================
+===========================  CONFIGURATION  ===========================
 
 /
 
@@ -38,13 +40,14 @@
 
 STATUSLINE-COB LOOKS FOR THE CONFIGURATION DATA SET IN THE FOLLOWING
 LOCATIONS:
-- $STATUSLINE_CONFIG (IF SET)
+- $STATUSLINE_CONFIG                   (IF SET)
 - ./STATUSLINE-COB.CFG
 - $XDG_CONFIG_HOME/STATUSLINE-COB/CONFIG.CFG
 - $HOME/.config/STATUSLINE-COB/CONFIG.CFG
 - $HOME/.STATUSLINE-COB.CFG
 - /etc/STATUSLINE/STATUSLINE.CFG
 - /etc/STATUSLINE-COB.CFG
+- $STATUSLINE_CONFIG_END               (IF SET)
 IF THE CDS IS NOT FOUND IN CDSNS, THE STATUSLINE-COB LOADS THE DEFAULT
 CONFIGURATION (SEE 2.2).
 
@@ -53,12 +56,13 @@ CONFIGURATION (SEE 2.2).
 CDNS ARE LINE SEQUENTIAL DATA SETS WITH RECORDS HAVING THE FOLLOWING
 STRUCTURE:
 - THE FIRST 8 BYTES SPECIFY THE COMMAND (SEE 2.3 FOR LIST OF COMMANDS)
-- RESERVED 1 BYTE.
-- NEXT 12 BYTES SPECIFY THE NAME FOR THE MODULE (SEE 2.4)
+- RESERVED 1 BYTE. CAN BE '*' TO IGNORE CARD
+- NEXT 12 BYTES SPECIFY THE NAME FOR THE MODULE, SEE 2.4
 - PADDING 1 BYTE.
-- 6 BYTES FOR RRGGBB COLOR VALUES IN HEXADECIMAL FORMAT.
+- 6 BYTES FOR COLOR VALUE, SEE 2.6.
 - PADDING 1 BYTE.
-- NEXT 71 BYTES SPECIFY USER-DEFINED DATA (SEE 2.4).
+- NEXT 41 BYTES SPECIFY USER-DEFINED DATA, SEE 2.4.
+- EVERYTHING ELSE IS IGNORED AND HISTORICALLY IS USED FOR LINE NUMBERS
 
 /
 
@@ -67,49 +71,77 @@ STRUCTURE:
 STATUSLINE-COB SUPPORTS THE FOLLOWING LIST OF COMMANDS:
 - '********' COMMENT COMMAND IS USED FOR MARKING THE RECORD AS COMMENT.
              THE REST OF THE RECORD IS SIMPLY IGNORED.
-- 'GENERAL ' GENERAL COMMAND USED FOR SPECIFYING GLOBAL SETTINGS SUCH AS
-             TIME FORMAT AND POLLING INTERVAL. THE COLOR AND NAME
+- 'GENERAL ' GENERAL COMMAND USED FOR SPECIFYING GLOBAL SETTINGS SUCH
+             AS TIME FORMAT AND POLLING INTERVAL. THE COLOR AND NAME
              COLUMNS ARE IGNORED. HAS THE FOLLOWING FORMAT:
-             - FIRST 3 BYTES IS USED FOR TIME FORMAT AND CAN BE EITHER:
-               '24H' OR '12H'.
-             - PADDING 1 BYTE
-             - NEXT 3 NUMBERS SPECIFY POLLING INTERVAL
-- 'MODULE  ': MODULE COMMAND USED FOR ADDING MODULES FOR A STATUSLINE.
-              FOR A MORE DETAILED MODULE SPECIFICATION, SEE 2.4.
+             - FIRST 3 NUMBERS SPECIFY POLLING INTERVAL
+             - PADDING BYTE
+             - 8 BYTES FOR THEME NAME, SEE 2.5.
+- 'MODULE  ' MODULE COMMAND USED FOR ADDING MODULES FOR A STATUSLINE.
+             FOR A MORE DETAILED MODULE SPECIFICATION, SEE 2.4.
 
 
 ===== LIST OF SUPPORTED MODULES
 
 STATUSLINE-COB SUPPORTS THE FOLLOWING MODULES:
-- `SYSTEM      ` SYSTEM MODULE IS USED FOR RUNNING EXTERNAL COMMAND.
+- 'SYSTEM      ' SYSTEM MODULE IS USED FOR RUNNING EXTERNAL COMMAND.
                  INTERNALLY IMPLEMENTED BY POSTFIXING THE USER SECTION
                  WITH PIPING OPERATOR TO A TEMPORARY FILE.
-- `BATTERY     ` BATTERY MODULE OUTPUTS THE CURRENT BATTERY PERCENTAGE
-                 DOES NOT ACCEPT ARGUMENTS AND THE CONTENT OF THE USER
-                 SECTION IS SIMPLY IGNORED.
-- `MEMORY      ` MEMORY MODULE OUTPUTS THE CURRENT MEMORY USAGE AND ALL
-                 OF THE AVAILABLE MEMORY. DOES NOT ACCEPT ARGUMENTS AND
-                 THE CONTENT OF THE USER SECTION IS SIMPLY IGNORED.
-- `LOAD        ` LOAD MODULE OUTPUTS THE CURRENT ONE MINUTE LOAD. DOES
-                 NOT ACCEPT ARGUMENTS AND THE CONTENT OF THE USER
-                 SECTION IS SIMPLY IGNORED.
-- `DATE        ` DATE MODULE OUTPUTS THE CURRENT DATE IN THE FORMAT OF
+- 'BATTERY     ' BATTERY MODULE OUTPUTS THE CURRENT BATTERY PERCENTAGE
+                 ACCEPTS FOLLOWING COMMANDS IN USER SECTION:
+                 - 'CAPACITY'
+- 'MEMORY      ' MEMORY MODULE OUTPUTS THE CURRENT MEMORY USAGE AND ALL
+                 OF THE AVAILABLE MEMORY.
+                 ACCEPTS FOLLOWING COMMANDS IN USER SECTION:
+                 - 'USED'
+                 - 'TOTAL'
+                 - 'FREE'
+                 - 'AVAILABLE'
+- 'LOAD        ' LOAD MODULE OUTPUTS THE CURRENT SYSTEM LOAD.
+                 ACCEPTS FOLLOWING COMMANDS IN USER SECTION:
+                 - '1M'
+- 'DATE        ' DATE MODULE OUTPUTS THE CURRENT DATE IN THE FORMAT OF
                  DD/MM/CCYY. FOR THE KNOWN ISSUES, SEE 4.1.1. ACCEPT THE
                  CENTURY SELECTOR AS A TEMPORARY FIX OF THE CURRENT
                  ISSUES.
-- `TIME        ` TIME MODULE OUTPUTS THE CURRENT TIME IN THE FORMAT OF
-                 HH:MM:SS. DOES NOT ACCEPT ARGUMENTS AND THE CONTENT OF
-                 THE USER SECTION IS SIMPLY IGNORED
+- 'TIME        ' TIME MODULE OUTPUTS THE CURRENT TIME IN THE FORMAT OF
+                 HH:MM:SS. ACCEPTS EITHER 24H or 12H.
+- 'TEXT        ' TEXT MODULE DISPLAYS TEXT PROVIDED IN THE USER SECTION
+- 'SPACE       ' SPACE MODULE PRINTS EXACTLY SINGLE SPACE CHARACTER.
+- 'SEPARATOR   ' SEPARATOR MODULE IS USED TO SEPARATE MODULES AND
+                 CURRENLY SUPPORTS FOLLOWING STYLES:
+                 - '<' IN USER SECTION FOR BLOCK SEPARATOR
+                 - "=" IN USER SECTION FOR CLASSIC BAR SEPARATOR
+
+FOR AN EXAMPLE CONFIGURATION SEE FILE 'STATUSLINE-COB.CFG'.
 
 /
 
-========================================================================
-=======================  COMPILING THE PROJECT  ========================
+===== LIST OF THEMES
+
+CURRENTLY STATUSLINE-COB SUPPORTS FOLLOWING THEMES:
+
+- 'ROSEPINE': SOMETHING BEAUTIFUL
+              ALL NATURAL PINE, FAUX FUR AND A BIT OF SOHO VIBES FOR
+              THE CLASSY MINIMALIST.
+
+===== LIST OF SUPPORTED COLORS
+
+- 'PRIM  ' ALSO KNOWN AS PRIMARY
+- 'SECOND' ALSO KNOWN AS SECONDARY
+- 'TERNRY' ALSO KNOWN AS TERNARY
+- 'WHITE ' PURE WHITE
+- 'BLACK ' PURE BLACK
+- 'CIRNO ' OR BLUE-ISH
+
+=======================================================================
+=======================  COMPILING THE PROJECT  =======================
 
 ===== LIST OF SUPPORTED STANDARDS
 
 CURRENTLY, STATUSLINE-COB IS WRITTEN IN GNU COBOL WITH IBM COBOL
-STANDARD FLAG.
+STANDARD FLAG ALTHOUGH NOT BEING COMPLETE IBM COBOL, THIS STANDARD FLAG
+PREVENTS SOME BACKWARDS COMPATIBILITY ISSUES.
 
 ===== COMPILING THE PROJECT
 
@@ -136,6 +168,10 @@ OF THE PROJECT.
 THIS SECTION IS MEANT FOR ADVANCED USERS WHO WISH TO CUSTOMIZE THE
 STATUSLINE-COB TO SUIT THEIR NEEDS MORE AND HELP THE PROJECT.
 
+FOR ADDING NEW COLORS YOU CAN REFER TO THE 'src/get-theme.cpy'.
+WARNING: YOU ALSO MIGHT WANT TO MAKE NEW COLORS CONFIGURABLE VIA 
+         THEMING. TO DO SO YOU NEED TO MODIFY 'src/themes-init.cpy'.
+
 /
 
 ===== KNOWN ISSUES
@@ -150,4 +186,4 @@ SPECIFY EITHER 'Y2K', 'Y2.1K' or 'Y2.2K'.
 - (X) DISPLAY MEMORY
 - (X) DISPLAY BATTERY
 - ( ) DISPLAY NETWORKING
-- ( ) ADD MORE CONFIGURATION OPTIONS
+- (X) ADD MORE CONFIGURATION OPTIONS
