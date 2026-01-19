@@ -50,6 +50,7 @@
          05  WS-HOME-DIR               PIC X(256).
          05  WS-XDG-CONFIG-HOME        PIC X(256).
          05  WS-STATUSLINE-CONFIG      PIC X(256).
+         05  WS-ONE-SHOT               PIC X VALUE 'N'.
 
        01 WS-CALLBACK                  PROCEDURE-POINTER.
        01 WS-CLICK-EVENTS              PIC IS X(1024).
@@ -139,6 +140,12 @@
              END-READ
            END-PERFORM.
        Main.
+           ACCEPT WS-ONE-SHOT FROM ENVIRONMENT "STATLINE_ONESHOT"
+           IF WS-ONE-SHOT NOT = "Y"
+             SET WS-ONE-SHOT           TO "N"
+           ELSE
+             SET WS-UPDATE-INTERVAL    TO 0
+           END-IF
            SET L-TYPE                  TO WS-TYPE
            SET L-TEXT                  TO NULL
            SET L-COLOR-BG              TO '000000FF'
@@ -146,7 +153,9 @@
            SET L-PART                  TO 1
            SET L-BODY                  TO SPACES
            CALL 'OUTPUT_FMT'
-           PERFORM LoopInner UNTIL 1<0
+           IF WS-ONE-SHOT = "Y" PERFORM LoopInner
+           ELSE PERFORM LoopInner UNTIL 1<0
+           END-IF
            STOP RUN.
        LoopInner.
            MOVE 'N' TO BAT-end-of-file

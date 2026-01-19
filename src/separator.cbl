@@ -17,9 +17,9 @@
            END-IF
            SET L-PART                  TO 6
            CALL 'OUTPUT_FMT'
+           SET L-COLOR-BG              TO L-COLOR-FG
            SET L-PART                  TO 5
            CALL 'OUTPUT_FMT'
-           SET L-COLOR-BG              TO L-COLOR-FG
            DISPLAY " " WITH NO ADVANCING
            SET L-PART                  TO 6
            CALL 'OUTPUT_FMT'
