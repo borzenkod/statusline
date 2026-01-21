@@ -24,6 +24,50 @@
                    WS-THEMES-CIRNO-BG(THM-IDX)
                  SET WS-MOD-COLOR-FG(MOD-IDX) TO
                    WS-THEMES-CIRNO-FG(THM-IDX)
+               WHEN "LOVE" SET WS-MOD-COLOR-BG(MOD-IDX) TO
+                     WS-THEMES-LOVE-BG(THM-IDX)
+                   SET WS-MOD-COLOR-FG(MOD-IDX) TO
+                     WS-THEMES-LOVE-FG(THM-IDX)
+               WHEN "SCARLE" SET WS-MOD-COLOR-BG(MOD-IDX) TO
+                     WS-THEMES-LOVE-BG(THM-IDX)
+                   SET WS-MOD-COLOR-FG(MOD-IDX) TO
+                     WS-THEMES-LOVE-FG(THM-IDX)
+               WHEN "RED" SET WS-MOD-COLOR-BG(MOD-IDX) TO
+                     WS-THEMES-LOVE-BG(THM-IDX)
+                   SET WS-MOD-COLOR-FG(MOD-IDX) TO
+                     WS-THEMES-LOVE-FG(THM-IDX)
+               WHEN "GOLD" SET WS-MOD-COLOR-BG(MOD-IDX) TO
+                     WS-THEMES-GOLD-BG(THM-IDX)
+                   SET WS-MOD-COLOR-FG(MOD-IDX) TO
+                     WS-THEMES-GOLD-FG(THM-IDX)
+               WHEN "YELLOW" SET WS-MOD-COLOR-BG(MOD-IDX) TO
+                     WS-THEMES-GOLD-BG(THM-IDX)
+                   SET WS-MOD-COLOR-FG(MOD-IDX) TO
+                     WS-THEMES-GOLD-FG(THM-IDX)
+               WHEN "ROSE" SET WS-MOD-COLOR-BG(MOD-IDX) TO
+                     WS-THEMES-ROSE-BG(THM-IDX)
+                   SET WS-MOD-COLOR-FG(MOD-IDX) TO
+                     WS-THEMES-ROSE-FG(THM-IDX)
+               WHEN "PINE" SET WS-MOD-COLOR-BG(MOD-IDX) TO
+                     WS-THEMES-PINE-BG(THM-IDX)
+                   SET WS-MOD-COLOR-FG(MOD-IDX) TO
+                     WS-THEMES-PINE-FG(THM-IDX)
+               WHEN "GREEN" SET WS-MOD-COLOR-BG(MOD-IDX) TO
+                     WS-THEMES-PINE-BG(THM-IDX)
+                   SET WS-MOD-COLOR-FG(MOD-IDX) TO
+                     WS-THEMES-PINE-FG(THM-IDX)
+               WHEN "FOAM" SET WS-MOD-COLOR-BG(MOD-IDX) TO
+                     WS-THEMES-FOAM-BG(THM-IDX)
+                   SET WS-MOD-COLOR-FG(MOD-IDX) TO
+                     WS-THEMES-FOAM-FG(THM-IDX)
+               WHEN "BLUE" SET WS-MOD-COLOR-BG(MOD-IDX) TO
+                     WS-THEMES-FOAM-BG(THM-IDX)
+                   SET WS-MOD-COLOR-FG(MOD-IDX) TO
+                     WS-THEMES-FOAM-FG(THM-IDX)
+               WHEN "IRIS" SET WS-MOD-COLOR-BG(MOD-IDX) TO
+                     WS-THEMES-IRIS-BG(THM-IDX)
+                   SET WS-MOD-COLOR-FG(MOD-IDX) TO
+                     WS-THEMES-IRIS-FG(THM-IDX)
                WHEN OTHER
                   CONTINUE
            END-EVALUATE

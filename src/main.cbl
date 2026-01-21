@@ -39,7 +39,7 @@
          05 WS-THEME-NAME              PIC IS X(8).
          05 WS-THEME-TYPE              PIC IS X(4).
        01 WS-MODULE-TABLE.
-         05 WS-MODULE  OCCURS 25 TIMES INDEXED BY MOD-IDX.
+         05 WS-MODULE  OCCURS 45 TIMES INDEXED BY MOD-IDX.
            10 WS-MOD-POINTER           PROCEDURE-POINTER.
            10 WS-MOD-BODY              PIC IS X(71).
            10 WS-MOD-COLOR-BG          PIC IS X(8).
@@ -196,6 +196,8 @@
                END-UNSTRING
                EVALUATE WS-THEME-NAME
                    WHEN "ROSEPINE" SET THM-IDX TO 1
+                   WHEN "GRUVBOX " SET THM-IDX TO 2
+                   WHEN "SOLARIZE" SET THM-IDX TO 3
                    WHEN OTHER CONTINUE
                END-EVALUATE
              WHEN WS-TYPE-MODULE PERFORM Process-Module
