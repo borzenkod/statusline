@@ -12,7 +12,8 @@
   src = ./.;
 
   buildPhase = ''
-    regina build.rexx
+    rexx ./TESTS/TEST.EXEC
+    rexx BUILD.EXEC
   '';
   installPhase = ''
     mkdir -p $out/bin

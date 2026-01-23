@@ -19,8 +19,9 @@
              DISPLAY "{ "
                QUOTE "version" QUOTE ": 1, "
                QUOTE "click_events" QUOTE ": true "
-             "}["
-           END-DISPLAY
+             "}"
+             END-DISPLAY
+             DISPLAY "[" END-DISPLAY
            END-IF
            EXIT PARAGRAPH.
        BodyStart.
@@ -64,21 +65,30 @@
            EXIT PARAGRAPH.
        i3Footer.
            DISPLAY QUOTE ","
-            QUOTE "color" QUOTE ": " QUOTE "#" COLOR-HEX-FG QUOTE
-            ","
-            QUOTE "background" QUOTE ": " QUOTE "#" COLOR-HEX-BG 
+             QUOTE "color" QUOTE ": " QUOTE "#" 
+             FUNCTION TRIM(COLOR-HEX-FG) QUOTE
+             ","
+             QUOTE "background" QUOTE ": " QUOTE "#" 
+             FUNCTION TRIM(COLOR-HEX-BG)
              QUOTE ","
-            QUOTE "separator" QUOTE ": " "false,"
-            QUOTE "separator_block_width" QUOTE ": " "0,"
-            "},"
+             QUOTE "separator" QUOTE ": " "false,"
+             QUOTE "separator_block_width" QUOTE ": " "0,"
+             "},"
            END-DISPLAY
            EXIT PARAGRAPH.
        termHeader.
-           DISPLAY
-             X'1B' "[38;2;" FG-R ";" FG-G ";" FG-B "m"
-             X'1B' "[48;2;" BG-R ";" BG-G ";" BG-B "m"
-             WITH NO ADVANCING
-           END-DISPLAY.
+           IF FG-T NOT = 0
+             DISPLAY
+               X'1B' "[38;2;" FG-R ";" FG-G ";" FG-B "m"
+               WITH NO ADVANCING
+             END-DISPLAY
+           END-IF
+           IF BG-T NOT = 0
+             DISPLAY
+               X'1B' "[48;2;" BG-R ";" BG-G ";" BG-B "m"
+               WITH NO ADVANCING
+             END-DISPLAY
+           END-IF
            EXIT PARAGRAPH.
        termFooter.
            DISPLAY X'1B' "[0m" WITH NO ADVANCING

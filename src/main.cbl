@@ -42,8 +42,8 @@
          05 WS-MODULE  OCCURS 99 TIMES INDEXED BY MOD-IDX.
            10 WS-MOD-POINTER           PROCEDURE-POINTER.
            10 WS-MOD-BODY              PIC IS X(42).
-           10 WS-MOD-COLOR-BG          PIC IS X(9).
-           10 WS-MOD-COLOR-FG          PIC IS X(9).
+           10 WS-MOD-COLOR-BG          PIC IS X(10).
+           10 WS-MOD-COLOR-FG          PIC IS X(10).
        01 WS-MODULES-LOADED            PIC IS 99 VALUE 00.
        01 TMP-PTR                      PROCEDURE-POINTER.
       /
@@ -172,8 +172,8 @@
            END-IF
            SET L-TYPE                  TO WS-TYPE
            SET L-TEXT                  TO NULL
-           SET L-COLOR-BG              TO '000000FF'
-           SET L-COLOR-FG              TO '000000FF'
+           SET L-COLOR-BG              TO '000000000'
+           SET L-COLOR-FG              TO '000000000'
            SET L-PART                  TO 1
            SET L-BODY                  TO SPACES
            CALL 'OUTPUT_FMT'
@@ -189,8 +189,8 @@
            SET L-PART                  TO 3
            SET L-COLOR-BG              TO '00000000'
            SET L-COLOR-FG              TO '00000000'
-           SET L-COLOR-BG-LAST         TO '00000000'
-           SET L-COLOR-FG-LAST         TO '00000000'
+           SET L-COLOR-BG-LAST         TO ZEROS
+           SET L-COLOR-FG-LAST         TO ZEROS
            PERFORM VARYING MOD-IDX FROM 1 BY 1
                UNTIL MOD-IDX > WS-MODULES-LOADED
                SET L-TEXT                  TO WS-MOD-POINTER(MOD-IDX)
@@ -243,8 +243,6 @@
              WHEN "BATTERY"
                SET HEX                     TO WS-MOD-BODY(MOD-IDX)(42:1)
                SET WS-MOD-BODY(MOD-IDX)(42:1) TO SPACE
-               DISPLAY WS-MOD-BODY(MOD-IDX)
-               END-DISPLAY
                INSPECT WS-MOD-BODY(MOD-IDX) 
                         REPLACING TRAILING SPACES BY X'00'
                SET WS-MOD-BODY(MOD-IDX)(42:1) TO HEX
@@ -270,8 +268,6 @@
              WHEN "TAPE"
                SET HEX                     TO WS-MOD-BODY(MOD-IDX)(42:1)
                SET WS-MOD-BODY(MOD-IDX)(42:1) TO SPACE
-               DISPLAY WS-MOD-BODY(MOD-IDX)
-               END-DISPLAY
                INSPECT WS-MOD-BODY(MOD-IDX) 
                         REPLACING TRAILING SPACES BY X'00'
                SET WS-MOD-BODY(MOD-IDX)(40:1) TO HEX
@@ -295,6 +291,11 @@
              PERFORM Hex2TMP
              MOVE TMP                       TO WS-COLOR-B
              MOVE WS-COLOR                  TO WS-MOD-COLOR-FG(MOD-IDX)
+             IF WS-MOD-COLOR-FG(MOD-IDX)(1:9) NOT = ZEROS
+               MOVE '1'                TO WS-MOD-COLOR-FG(MOD-IDX)(10:1)
+             ELSE
+               MOVE '0'                TO WS-MOD-COLOR-FG(MOD-IDX)(10:1)
+             END-IF
              MOVE WS-MOD-COLOR-BG(MOD-IDX)  TO WS-COLOR-HEX
              MOVE WS-COLOR-R-HEX            TO HEX
              PERFORM Hex2TMP
@@ -306,6 +307,11 @@
              PERFORM Hex2TMP
              MOVE TMP                       TO WS-COLOR-B
              MOVE WS-COLOR                  TO WS-MOD-COLOR-BG(MOD-IDX)
+             IF WS-MOD-COLOR-BG(MOD-IDX)(1:9) NOT = ZEROS
+               MOVE '1'                TO WS-MOD-COLOR-BG(MOD-IDX)(10:1)
+             ELSE
+               MOVE '0'                TO WS-MOD-COLOR-BG(MOD-IDX)(10:1)
+             END-IF
            END-IF
            EXIT PARAGRAPH.
        Hex2TMP.

@@ -1,7 +1,6 @@
 #!/usr/bin/env rexx
 
 global_args = "-std=ibm -ftrace"
-global_args = global_args "-O3"
 global_args = global_args "-fsign=ebcdic"
 global_args = global_args "-fdefault-colseq=ebcdic"
 global_args = global_args "-febcdic-table=ebcdic500_latin1"
@@ -22,6 +21,9 @@ call test "OUTPUT_I3_005"     global_args "../../src/output.cbl"
 call test "OUTPUT_I3_006"     global_args "../../src/output.cbl"
 call test "PATH_001"          global_args "../../src/path.cbl"
 call test "PATH_002"          global_args "../../src/path.cbl"
+call test "DATE_001"          global_args "../../src/date_hook.cbl"
+call test "DATE_002"          global_args "../../src/date_hook.cbl"
+call test "DATE_003"          global_args "../../src/date_hook.cbl"
 
 exit 0
 
@@ -46,5 +48,6 @@ test:
     say "  << EXPECTED:"
     say "  <  "target.1
     say
+    exit 8
   end
   return

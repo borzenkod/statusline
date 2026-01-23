@@ -1,4 +1,4 @@
-VOL1STLN1 ===== MAKING STATUSLINE GENERATORS SINCE 1784 === DUB850615 =
+VOL1STLN1 THE STATUSLINE                                    DUB19850615
 =======================================================================
          ____ _____  _  _____ _   _ ____  _     ___ _   _ _____
         / ___|_   _|/ \|_   _| | | / ___|| |   |_ _| \ | | ____|
@@ -11,31 +11,31 @@ VOL1STLN1 ===== MAKING STATUSLINE GENERATORS SINCE 1784 === DUB850615 =
                          + TABLE OF CONTENTS +
 
 1. PREFACE . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  1
-2. CONFIGURATION . . . . . . . . . . . . . . . . . . . . . . . . . .  1
+2. CONFIGURATION . . . . . . . . . . . . . . . . . . . . . . . . . .  2
    2.1. COMMON DSN . . . . . . . . . . . . . . . . . . . . . . . . .  2
    2.2. GENERAL STRUCTURE OF THE CONFIGURATION RECORD  . . . . . . .  2
    2.3. LIST OF SUPPORTED COMMANDS . . . . . . . . . . . . . . . . .  3
-   2.4. LIST OF SUPPORTED MODULES  . . . . . . . . . . . . . . . . .  3
-   2.5. LIST OF THEMES . . . . . . . . . . . . . . . . . . . . . . .  4
-   2.6. LIST OF SUPPORTED COLORS . . . . . . . . . . . . . . . . . .  4
-3. COMPILING THE PROJECT . . . . . . . . . . . . . . . . . . . . . .  4
-   3.1. LIST OF SUPPORTED STANDARDS  . . . . . . . . . . . . . . . .  4
-   3.2. COMPILING THE PROJECT  . . . . . . . . . . . . . . . . . . .  4
-      3.2.1. COMPILING USING NIX . . . . . . . . . . . . . . . . . .  4
-4. HACKING . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  4
-   4.1. KNOWN ISSUES . . . . . . . . . . . . . . . . . . . . . . . .  5
-      4.1.1. Y2K . . . . . . . . . . . . . . . . . . . . . . . . . .  5
-   4.2. TO DO LIST . . . . . . . . . . . . . . . . . . . . . . . . .  5
+   2.4. LIST OF SUPPORTED MODULES  . . . . . . . . . . . . . . . . .  4
+   2.5. LIST OF THEMES . . . . . . . . . . . . . . . . . . . . . . .  5
+   2.6. LIST OF SUPPORTED COLORS . . . . . . . . . . . . . . . . . .  5
+3. COMPILING THE PROJECT . . . . . . . . . . . . . . . . . . . . . .  5
+   3.1. LIST OF SUPPORTED STANDARDS  . . . . . . . . . . . . . . . .  6
+   3.2. COMPILING THE PROJECT  . . . . . . . . . . . . . . . . . . .  6
+      3.2.1. COMPILING USING NIX . . . . . . . . . . . . . . . . . .  6
+4. HACKING . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  6
+   4.1. KNOWN ISSUES . . . . . . . . . . . . . . . . . . . . . . . .  7
+      4.1.1. Y2K . . . . . . . . . . . . . . . . . . . . . . . . . .  7
+   4.2. TO DO LIST . . . . . . . . . . . . . . . . . . . . . . . . .  7
 
 =======================================================================
 ==============================  PREFACE  ==============================
 
    SIMPLE STATUS LINE WRITTEN IN THE BEST PROGRAMMING LANGUAGE EVER.
 
+/
+
 =======================================================================
 ===========================  CONFIGURATION  ===========================
-
-/
 
 ===== COMMON DATA SET NAME
 
@@ -52,7 +52,7 @@ LOCATIONS:
 IF THE CDS IS NOT FOUND IN CDSNS, THE STATUSLINE LOADS THE DEFAULT
 CONFIGURATION (SEE 2.2).
 
-===== GENERAL STRUCTURE OF THE CONFIGURATIONAL RECORD
+===== GENERAL STRUCTURE OF THE CONFIGURATION RECORD
 
 CDS ARE LINE SEQUENTIAL DATA SETS WITH RECORDS HAVING THE FOLLOWING
 STRUCTURE:
@@ -88,9 +88,11 @@ STATUSLINE SUPPORTS THE FOLLOWING MODULES:
 - 'SYSTEM      ' SYSTEM MODULE IS USED FOR RUNNING EXTERNAL COMMAND.
                  INTERNALLY IMPLEMENTED BY POSTFIXING THE USER SECTION
                  WITH PIPING OPERATOR TO A TEMPORARY FILE.
-- 'BATTERY     ' BATTERY MODULE OUTPUTS THE CURRENT BATTERY PERCENTAGE
-                 ACCEPTS FOLLOWING COMMANDS IN USER SECTION:
-                 - 'CAPACITY'
+- 'BATTERY     ' BATTERY MODULE OUTPUTS THE CURRENT BATTERY PERCENTAGE.
+                 THE OPERATOR IS REQUIRED TO PROVIDE PATH TO BATTERY
+                 UEVENT DSN IN THE USER SECTION. THE LAST BYTE IN THE
+                 USER SECTION SPECIFIES THE OUTPUT TYPE:
+                 - 'C': CAPACITY
 - 'MEMORY      ' MEMORY MODULE OUTPUTS THE CURRENT MEMORY USAGE AND ALL
                  OF THE AVAILABLE MEMORY.
                  ACCEPTS FOLLOWING COMMANDS IN USER SECTION:
@@ -98,6 +100,7 @@ STATUSLINE SUPPORTS THE FOLLOWING MODULES:
                  - 'TOTAL'
                  - 'FREE'
                  - 'AVAILABLE'
+/
 - 'LOAD        ' LOAD MODULE OUTPUTS THE CURRENT SYSTEM LOAD.
                  ACCEPTS FOLLOWING COMMANDS IN USER SECTION:
                  - '1M'
@@ -110,8 +113,9 @@ STATUSLINE SUPPORTS THE FOLLOWING MODULES:
 - 'TEXT        ' TEXT MODULE DISPLAYS TEXT PROVIDED IN THE USER SECTION
 - 'SPACE       ' SPACE MODULE PRINTS EXACTLY SINGLE SPACE CHARACTER.
 - 'SEPARATOR   ' SEPARATOR MODULE IS USED TO SEPARATE MODULES AND
-                 CURRENLY SUPPORTS FOLLOWING STYLES:
+                 CURRENTLY SUPPORTS FOLLOWING STYLES:
                  - '<' IN USER SECTION FOR BLOCK SEPARATOR
+                 - '>' IN USER SECTION FOR BLOCK SEPARATOR
                  - "=" IN USER SECTION FOR CLASSIC BAR SEPARATOR
 - 'TAPE        ' TAPE MODULE DISPLAYS THE STATUS OF THE BLOCK DEVICE
                  PROVIDED BY THE USER SECTION. THE LAST BYTE IN USER
@@ -147,7 +151,7 @@ CURRENTLY STATUSLINE SUPPORTS FOLLOWING THEMES:
 
 ===== LIST OF SUPPORTED COLORS
 
-- 'PRIM  ' ALSO KNOWN AS PRIMAR
+- 'PRIM  ' ALSO KNOWN AS PRIMARY
 - 'SECOND' ALSO KNOWN AS SECONDARY
 - 'TERNRY' ALSO KNOWN AS TERNARY
 - 'WHITE ' PURE WHITE
@@ -156,7 +160,7 @@ CURRENTLY STATUSLINE SUPPORTS FOLLOWING THEMES:
 - 'LOVE  ' OR 'RED   ' OR 'SCARLE'. PER FAVORE AMA TUTTI.
            NOTE: THAT SINCE SCARLET IS LARGER THAN 6 BYTES YOU
            TECHNICALLY CAN WRITE LAST T INTO THE PADDING CHARACTER
-- 'GOLD  ' OR 'YELOW ' LEMON TEA ON A SUMMER MORNING.
+- 'GOLD  ' OR 'YELLOW' LEMON TEA ON A SUMMER MORNING.
 - 'ROSE  ' A BEAUTIFUL YET CAUTIOUS BLOSSOM.
 - 'PINE  ' OR 'GREEN ' FRESH WINTER GREENERY.
 - 'FOAM  ' OR 'BLUE  ' SALTWATER TIDE POOLS.
@@ -168,6 +172,8 @@ CURRENTLY STATUSLINE SUPPORTS FOLLOWING THEMES:
 =======================  COMPILING THE PROJECT  =======================
 
 ===== LIST OF SUPPORTED STANDARDS
+
+/
 
 CURRENTLY, STATUSLINE IS WRITTEN IN GNU COBOL WITH IBM COBOL
 STANDARD FLAG ALTHOUGH NOT BEING COMPLETE IBM COBOL, THIS STANDARD FLAG

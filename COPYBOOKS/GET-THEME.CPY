@@ -67,6 +67,10 @@
                      WS-THEMES-IRIS-BG(THM-IDX)
                    SET WS-MOD-COLOR-FG(MOD-IDX) TO
                      WS-THEMES-IRIS-FG(THM-IDX)
+               WHEN "TRANSP" SET WS-MOD-COLOR-BG(MOD-IDX) TO
+                     "00000000"
+                   SET WS-MOD-COLOR-FG(MOD-IDX) TO
+                     "00000000"
                WHEN OTHER
                   CONTINUE
            END-EVALUATE

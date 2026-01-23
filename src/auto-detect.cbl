@@ -64,12 +64,15 @@
                         TMP
                         NAME
                         TMP
+                        TMP
                         PPID
                     END-UNSTRING
                  MOVE 1 TO TMP
              END-READ
            END-PERFORM
            CLOSE PPID-FD.
-           IF NAME(1:2) = "sh"
+           MOVE 0 to TMP
+           INSPECT NAME TALLYING TMP FOR ALL "sh"
+           IF TMP NOT = 0
              PERFORM ParseParen
            END-IF.
