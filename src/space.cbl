@@ -3,5 +3,6 @@
        DATA DIVISION.
        PROCEDURE DIVISION.
            DISPLAY " " WITH NO ADVANCING
+           END-DISPLAY
            GOBACK.
 

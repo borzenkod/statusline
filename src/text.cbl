@@ -2,8 +2,9 @@
        PROGRAM-ID. DTEXTHOOK.
        DATA DIVISION.
        LINKAGE SECTION.
-       01 L-BODY                  PIC X(71).
+       01 L-BODY                  PIC X(41).
        PROCEDURE DIVISION USING L-BODY.
            DISPLAY FUNCTION TRIM(L-BODY) WITH NO ADVANCING
+           END-DISPLAY
            GOBACK.
 

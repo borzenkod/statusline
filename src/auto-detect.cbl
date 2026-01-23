@@ -20,11 +20,13 @@
        PROCEDURE DIVISION USING L-TYPE.
        Main.
            CALL 'isatty'               USING 0 RETURNING TMP
+           END-CALL
            IF TMP = 1
              MOVE 1 TO L-TYPE
              GOBACK
            END-IF
            CALL 'getppid'              RETURNING PPID
+           END-CALL
            PERFORM ParseParen.
            SET L-TYPE                  TO 1
            IF NAME(1:5) = "i3bar"
@@ -39,6 +41,7 @@
            PERFORM UNTIL PPID = 0
              MOVE FUNCTION MOD(PPID, 10) TO TMP
              COMPUTE PPID = PPID / 10
+             END-COMPUTE
              STRING PPID-FILE DELIMITED BY SPACE
                TMP
                INTO PPID-FILE
@@ -62,8 +65,11 @@
                         NAME
                         TMP
                         PPID
+                    END-UNSTRING
                  MOVE 1 TO TMP
              END-READ
            END-PERFORM
            CLOSE PPID-FD.
-           IF NAME(1:2) = "sh" PERFORM ParseParen.
+           IF NAME(1:2) = "sh"
+             PERFORM ParseParen
+           END-IF.

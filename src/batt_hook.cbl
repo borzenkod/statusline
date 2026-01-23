@@ -20,7 +20,7 @@
          88 CHARGED                    VALUE 2.
        01 TMP                          PIC 9(10).
        LINKAGE SECTION.
-       01 L-BODY                  PIC X(71).
+       01 L-BODY                  PIC X(41).
        PROCEDURE DIVISION USING L-BODY.
            OPEN INPUT BAT
            PERFORM UNTIL BAT-end-of-file = 'Y'
@@ -31,7 +31,8 @@
            END-PERFORM
            CLOSE BAT
            EVALUATE L-BODY
-               WHEN "CAPACITY" DISPLAY WS-CAPACITY WITH NO ADVANCING
+             WHEN "CAPACITY" DISPLAY WS-CAPACITY WITH NO ADVANCING
+               END-DISPLAY
                WHEN OTHER CONTINUE
            END-EVALUATE
            GOBACK.
@@ -40,5 +41,6 @@
                MOVE FD-LINE(23:) TO WS-LINE
                MOVE FUNCTION Trim(WS-LINE) TO WS-LINE
                UNSTRING WS-LINE DELIMITED BY SPACES INTO WS-LINE
+               END-UNSTRING
                MOVE FUNCTION NUMVAL(WS-LINE) TO WS-CAPACITY
            END-IF.

@@ -2,13 +2,7 @@
        PROGRAM-ID. OUTPUT_FMT RECURSIVE.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01 TMP                          PIC IS 999.
-       01 HEX                          PIC IS XX.
-       01 WS-IDX                       PIC IS 9.
-       01 CURRENT                      PIC IS X.
-       01 CURRENT-DEC                  PIC IS 99.
-
-       COPY "src/output.cpy".
+       COPY "COPYBOOKS/OUTPUT.CPY".
        PROCEDURE DIVISION.
            EVALUATE L-PART
              WHEN 1 PERFORM Header
@@ -25,13 +19,13 @@
              DISPLAY "{ "
                QUOTE "version" QUOTE ": 1, "
                QUOTE "click_events" QUOTE ": true "
-             "}"
-             DISPLAY "["
+             "}["
+           END-DISPLAY
            END-IF
            EXIT PARAGRAPH.
        BodyStart.
            IF L-TYPE = 0
-             DISPLAY "["
+             DISPLAY "[" END-DISPLAY
            END-IF
            EXIT PARAGRAPH.
        BodyHeader.
@@ -43,7 +37,8 @@
            EXIT PARAGRAPH.
        Body.
            PERFORM BodyHeader
-           CALL L-TEXT USING L-BODY.
+           CALL L-TEXT USING L-BODY
+           END-CALL
            PERFORM BodyFooter
            SET COLOR-HEX-BG-LAST       TO COLOR-HEX-BG
            SET COLOR-HEX-FG-LAST       TO COLOR-HEX-FG
@@ -57,61 +52,35 @@
            EXIT PARAGRAPH.
        BodyEnd.
            EVALUATE L-TYPE
-             WHEN 0 DISPLAY "],"
-             WHEN 1 DISPLAY " "
+             WHEN 0 DISPLAY "]," END-DISPLAY
+             WHEN 1 DISPLAY " " END-DISPLAY
            END-EVALUATE
            EXIT PARAGRAPH.
        i3Header.
            DISPLAY "{"
-           DISPLAY QUOTE "full_text" QUOTE ": " QUOTE WITH NO ADVANCING
+             QUOTE "full_text" QUOTE ": " QUOTE
+             WITH NO ADVANCING
+           END-DISPLAY
            EXIT PARAGRAPH.
        i3Footer.
            DISPLAY QUOTE ","
-           DISPLAY QUOTE "color" QUOTE ": " QUOTE "#" COLOR-HEX-FG QUOTE
-           DISPLAY ","
-           DISPLAY QUOTE "background" QUOTE ": " QUOTE "#" COLOR-HEX-BG 
-           QUOTE ","
-           DISPLAY QUOTE "separator" QUOTE ": " "false,"
-           DISPLAY QUOTE "separator_block_width" QUOTE ": " "0,"
-           DISPLAY "},"
+            QUOTE "color" QUOTE ": " QUOTE "#" COLOR-HEX-FG QUOTE
+            ","
+            QUOTE "background" QUOTE ": " QUOTE "#" COLOR-HEX-BG 
+             QUOTE ","
+            QUOTE "separator" QUOTE ": " "false,"
+            QUOTE "separator_block_width" QUOTE ": " "0,"
+            "},"
+           END-DISPLAY
            EXIT PARAGRAPH.
        termHeader.
-           DISPLAY X'1B' "[38;2;" WITH NO ADVANCING
-           MOVE FG-R TO HEX
-           PERFORM Hex2TMP
-           DISPLAY TMP ";" WITH NO ADVANCING
-           MOVE FG-G TO HEX
-           PERFORM Hex2TMP
-           DISPLAY TMP ";" WITH NO ADVANCING
-           MOVE FG-B TO HEX
-           PERFORM Hex2TMP
-           DISPLAY TMP "m" WITH NO ADVANCING
-           DISPLAY X'1B' "[48;2;" WITH NO ADVANCING
-           MOVE BG-R TO HEX
-           PERFORM Hex2TMP
-           DISPLAY TMP ";" WITH NO ADVANCING
-           MOVE BG-G TO HEX
-           PERFORM Hex2TMP
-           DISPLAY TMP ";" WITH NO ADVANCING
-           MOVE BG-B TO HEX
-           PERFORM Hex2TMP
-           DISPLAY TMP "m" WITH NO ADVANCING
+           DISPLAY
+             X'1B' "[38;2;" FG-R ";" FG-G ";" FG-B "m"
+             X'1B' "[48;2;" BG-R ";" BG-G ";" BG-B "m"
+             WITH NO ADVANCING
+           END-DISPLAY.
            EXIT PARAGRAPH.
        termFooter.
            DISPLAY X'1B' "[0m" WITH NO ADVANCING
-           EXIT PARAGRAPH.
-       Hex2TMP.
-           MOVE 0 TO TMP
-           PERFORM VARYING WS-IDX FROM 1 BY 1 UNTIL WS-IDX > 2
-             MOVE HEX(WS-IDX:1) TO CURRENT
-             MOVE FUNCTION UPPER-CASE(HEX) TO HEX
-             IF CURRENT >= '0' AND CURRENT <= '9'
-               COMPUTE CURRENT-DEC = FUNCTION ORD(CURRENT) - FUNCTION
-               ORD("0")
-             ELSE
-               COMPUTE CURRENT-DEC = 
-               FUNCTION ORD(CURRENT) - FUNCTION ORD("A") + 10
-             END-IF
-             COMPUTE TMP = TMP * 16 + CURRENT-DEC
-           END-PERFORM
+           END-DISPLAY
            EXIT PARAGRAPH.

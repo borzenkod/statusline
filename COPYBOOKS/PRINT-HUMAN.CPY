@@ -1,0 +1,27 @@
+       PrintHuman.
+           MOVE 1 TO WS-BIT-SIZE
+           PERFORM UNTIL WS-PRINT-HUMAN < 1024
+               COMPUTE WS-PRINT-HUMAN = WS-PRINT-HUMAN / 1024
+               END-COMPUTE
+               SET WS-BIT-SIZE UP BY 1
+           END-PERFORM.
+           DISPLAY WS-PRINT-HUMAN(8:3) WITH NO ADVANCING
+           END-DISPLAY
+           EVALUATE WS-PRINT-HUMAN-TYPE
+               WHEN 9
+                 EVALUATE WS-BIT-SIZE
+                   WHEN 1 DISPLAY " K" WITH NO ADVANCING END-DISPLAY
+                   WHEN 2 DISPLAY " M" WITH NO ADVANCING END-DISPLAY
+                   WHEN 3 DISPLAY " G" WITH NO ADVANCING END-DISPLAY
+                   WHEN 4 DISPLAY " T" WITH NO ADVANCING END-DISPLAY
+                   WHEN OTHER CONTINUE
+                 END-EVALUATE
+               WHEN OTHER
+                 EVALUATE WS-BIT-SIZE
+                   WHEN 1 DISPLAY " KiB" WITH NO ADVANCING END-DISPLAY
+                   WHEN 2 DISPLAY " MiB" WITH NO ADVANCING END-DISPLAY
+                   WHEN 3 DISPLAY " GiB" WITH NO ADVANCING END-DISPLAY
+                   WHEN 4 DISPLAY " TiB" WITH NO ADVANCING END-DISPLAY
+                   WHEN OTHER DISPLAY "b" WITH NO ADVANCING END-DISPLAY
+                 END-EVALUATE
+           END-EVALUATE.

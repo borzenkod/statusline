@@ -1,0 +1,46 @@
+#!/usr/bin/env rexx
+
+args = "-std=ibm -ftrace -g"
+args = args "-O3"
+args = args "-fsign=ebcdic"
+args = args "-fdefault-colseq=ebcdic"
+args = args "-febcdic-table=ebcdic500_latin1"
+args = args "-fstatic-call"
+args = args "-fnotrunc"
+args = args "-farithmetic-osvs"
+args = args "-W -Wno-possible-truncate"
+args = args "-I .."
+
+args = args "-Werror"
+
+files = "../src/main.cbl ../src/output.cbl ../src/auto-detect.cbl"
+files = files "../src/time_hook.cbl"
+files = files "../src/date_hook.cbl"
+files = files "../src/load_hook.cbl"
+files = files "../src/mem_hook.cbl"
+files = files "../src/batt_hook.cbl"
+files = files "../src/system_hook.cbl"
+files = files "../src/text.cbl"
+files = files "../src/separator.cbl"
+files = files "../src/space.cbl"
+files = files "../src/path.cbl"
+files = files "../src/tape.cbl"
+
+command = "mkdir -p build"
+SAY ' +' command
+command
+command = "cd build && cobc" args "-x" files
+SAY ' +' command
+command
+
+cobrc = rc
+if cobrc != 0 then do
+    say "Compile failed, RC=" rc
+    exit rc
+  end
+
+command = "cp ./build/main ."
+SAY ' +' command
+command
+
+exit rc

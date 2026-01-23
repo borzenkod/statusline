@@ -18,8 +18,10 @@
        01 WS-RAM-AVAILABLE             PIC 9(10) USAGE COMP.
        01 WS-RAM-USED                  PIC 9(10) USAGE COMP.
        01 TMP                          PIC 9(10).
+       01 WS-PRINT-HUMAN REDEFINES TMP PIC 9(10).
+       01 WS-PRINT-HUMAN-TYPE          PIC 9 VALUE 0.
        LINKAGE SECTION.
-       01 L-BODY                       PIC X(71).
+       01 L-BODY                       PIC X(41).
        PROCEDURE DIVISION USING L-BODY.
            OPEN INPUT MEM
            PERFORM UNTIL MEM-end-of-file = 'Y'
@@ -32,6 +34,7 @@
            EVALUATE L-BODY
              WHEN "USED"
                  COMPUTE WS-RAM-USED = WS-RAM-TOTAL - WS-RAM-AVAILABLE
+                 END-COMPUTE
                  MOVE WS-RAM-USED TO TMP
                  PERFORM PrintHuman
                WHEN "AVAILABLE"
@@ -51,31 +54,21 @@
                MOVE FD-LINE(10:) TO WS-LINE
                MOVE FUNCTION Trim(WS-LINE) TO WS-LINE
                UNSTRING WS-LINE DELIMITED BY SPACES INTO WS-LINE
+               END-UNSTRING
                MOVE FUNCTION NUMVAL(WS-LINE) TO WS-RAM-TOTAL
            END-IF
            IF FD-LINE(1:9) = "MemFree:"
                MOVE FD-LINE(9:) TO WS-LINE
                MOVE FUNCTION Trim(WS-LINE) TO WS-LINE
                UNSTRING WS-LINE DELIMITED BY SPACES INTO WS-LINE
+               END-UNSTRING
                MOVE FUNCTION NUMVAL(WS-LINE) TO WS-RAM-FREE
            END-IF
            IF FD-LINE(1:14) = "MemAvailable:"
                MOVE FD-LINE(14:) TO WS-LINE
                MOVE FUNCTION Trim(WS-LINE) TO WS-LINE
                UNSTRING WS-LINE DELIMITED BY SPACES INTO WS-LINE
+               END-UNSTRING
                MOVE FUNCTION NUMVAL(WS-LINE) TO WS-RAM-AVAILABLE
            END-IF.
-       PrintHuman.
-           MOVE 1 TO WS-BIT-SIZE
-           PERFORM UNTIL TMP < 1024
-               COMPUTE TMP = TMP / 1024
-               SET WS-BIT-SIZE UP BY 1
-           END-PERFORM.
-           DISPLAY TMP(8:3) WITH NO ADVANCING
-           EVALUATE WS-BIT-SIZE
-               WHEN 1 DISPLAY " KiB" WITH NO ADVANCING
-               WHEN 2 DISPLAY " MiB" WITH NO ADVANCING
-               WHEN 3 DISPLAY " GiB" WITH NO ADVANCING
-               WHEN 4 DISPLAY " TiB" WITH NO ADVANCING
-               WHEN OTHER DISPLAY "b" WITH NO ADVANCING
-           END-EVALUATE.
+       COPY "COPYBOOKS/PRINT-HUMAN.CPY".

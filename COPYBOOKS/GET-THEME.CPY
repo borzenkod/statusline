@@ -1,4 +1,3 @@
-
            EVALUATE WS-CONFIG-COLOR
                WHEN "PRIM" SET WS-MOD-COLOR-BG(MOD-IDX) TO
                    WS-THEMES-BG-PRIMARY(THM-IDX)

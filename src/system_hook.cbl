@@ -14,17 +14,19 @@
                                        VALUE   IS "/tmp/STATUS-CBL-OUT".
        01 COMMAND-BODY                 PICTURE IS X(128).
        LINKAGE SECTION.
-       01 L-BODY                       PIC X(71).
+       01 L-BODY                       PIC X(41).
        PROCEDURE DIVISION USING L-BODY.
            STRING L-BODY DELIMITED BY SIZE " > "
              WS-TEMP-FILE INTO COMMAND-BODY
            END-STRING
-           CALL 'SYSTEM' USING COMMAND-BODY.
+           CALL 'SYSTEM' USING COMMAND-BODY
+           END-CALL
            OPEN INPUT SYSTEM-COMMAND-FILE
            READ SYSTEM-COMMAND-FILE
              AT END GOBACK
              NOT AT END DISPLAY FUNCTION TRIM(SYSTEM-COMMAND-LINE)
                WITH NO ADVANCING
+             END-DISPLAY
            END-READ
            CLOSE SYSTEM-COMMAND-FILE
            GOBACK.
