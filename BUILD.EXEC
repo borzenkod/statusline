@@ -13,7 +13,8 @@ args = args "-I .."
 
 args = args "-Werror"
 
-files = "../src/main.cbl ../src/output.cbl ../src/auto-detect.cbl"
+main_file = "../src/main.cbl"
+files = "../src/output.cbl ../src/auto-detect.cbl"
 files = files "../src/time_hook.cbl"
 files = files "../src/date_hook.cbl"
 files = files "../src/load_hook.cbl"
@@ -26,21 +27,35 @@ files = files "../src/space.cbl"
 files = files "../src/path.cbl"
 files = files "../src/tape.cbl"
 
-command = "mkdir -p build"
-SAY ' +' command
-command
-command = "cd build && cobc" args "-x" files
-SAY ' +' command
-command
+arg command other
+if command = "" then command = "COMPILE"
 
-cobrc = rc
-if cobrc != 0 then do
-    say "Compile failed, RC=" rc
-    exit rc
+select
+  when command = "COMPILE" then do
+      command = "mkdir -p build"
+      SAY ' +' command
+      command
+      command = "cd build && cobc" args "-x" main_file files
+      SAY ' +' command
+      command
+
+      cobrc = rc
+      if cobrc != 0 then do
+      say "Compile failed, RC=" rc
+      exit rc
+      end
+
+      command = "cp ./build/main ."
+      SAY ' +' command
+      command
+    end
+  when command = "TEST" then do
+    "./TESTS/TEST.EXEC" 
+    end
+  otherwise do
+    say "BUILD.EXEC SUPPORTS ONLY 'COMPILE' OR 'TEST' SUB COMMANDS"
+    say "COMMAND: '"command"' is not recognised"
   end
-
-command = "cp ./build/main ."
-SAY ' +' command
-command
+end
 
 exit rc

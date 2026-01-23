@@ -21,7 +21,7 @@
        01 WS-PRINT-HUMAN REDEFINES TMP PIC 9(10).
        01 WS-PRINT-HUMAN-TYPE          PIC 9 VALUE 0.
        LINKAGE SECTION.
-       01 L-BODY                       PIC X(41).
+       01 L-BODY                       PIC X(42).
        PROCEDURE DIVISION USING L-BODY.
            OPEN INPUT MEM
            PERFORM UNTIL MEM-end-of-file = 'Y'

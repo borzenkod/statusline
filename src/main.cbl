@@ -41,7 +41,7 @@
        01 WS-MODULE-TABLE.
          05 WS-MODULE  OCCURS 99 TIMES INDEXED BY MOD-IDX.
            10 WS-MOD-POINTER           PROCEDURE-POINTER.
-           10 WS-MOD-BODY              PIC IS X(71).
+           10 WS-MOD-BODY              PIC IS X(42).
            10 WS-MOD-COLOR-BG          PIC IS X(9).
            10 WS-MOD-COLOR-FG          PIC IS X(9).
        01 WS-MODULES-LOADED            PIC IS 99 VALUE 00.
@@ -241,6 +241,13 @@
            SET WS-MOD-BODY(MOD-IDX)         TO WS-CONFIG-BODY.
            EVALUATE WS-CONFIG-NAME
              WHEN "BATTERY"
+               SET HEX                     TO WS-MOD-BODY(MOD-IDX)(42:1)
+               SET WS-MOD-BODY(MOD-IDX)(42:1) TO SPACE
+               DISPLAY WS-MOD-BODY(MOD-IDX)
+               END-DISPLAY
+               INSPECT WS-MOD-BODY(MOD-IDX) 
+                        REPLACING TRAILING SPACES BY X'00'
+               SET WS-MOD-BODY(MOD-IDX)(42:1) TO HEX
                SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DBATTHOOK'
              WHEN "MEMORY"
                SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DMEMHOOK'

@@ -15,7 +15,7 @@
            10  WS-CURRENT-MS      PIC  9(2).
         05  WS-DIFF-FROM-GMT      PIC S9(4).
        LINKAGE SECTION.
-       01 L-BODY                  PIC X(41).
+       01 L-BODY                  PIC X(42).
        PROCEDURE DIVISION USING L-BODY.
            MOVE FUNCTION CURRENT-DATE TO WS-CURRENT-DATE-FIELDS
            DISPLAY 

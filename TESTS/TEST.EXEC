@@ -1,0 +1,50 @@
+#!/usr/bin/env rexx
+
+global_args = "-std=ibm -ftrace"
+global_args = global_args "-O3"
+global_args = global_args "-fsign=ebcdic"
+global_args = global_args "-fdefault-colseq=ebcdic"
+global_args = global_args "-febcdic-table=ebcdic500_latin1"
+global_args = global_args "-fstatic-call"
+global_args = global_args "-fnotrunc"
+global_args = global_args "-farithmetic-osvs"
+global_args = global_args "-W -Wno-possible-truncate"
+address system "pwd" WITH OUTPUT STEM pwd.
+global_args = global_args "-I "pwd.1
+global_args = global_args "-job"
+
+call test "BATTERY_BAT0_LIKE" global_args "../../src/batt_hook.cbl"
+call test "OUTPUT_I3_001"     global_args "../../src/output.cbl"
+call test "OUTPUT_I3_002"     global_args "../../src/output.cbl"
+call test "OUTPUT_I3_003"     global_args "../../src/output.cbl"
+call test "OUTPUT_I3_004"     global_args "../../src/output.cbl"
+call test "OUTPUT_I3_005"     global_args "../../src/output.cbl"
+call test "OUTPUT_I3_006"     global_args "../../src/output.cbl"
+call test "PATH_001"          global_args "../../src/path.cbl"
+call test "PATH_002"          global_args "../../src/path.cbl"
+
+exit 0
+
+test:
+  parse arg path args aargs
+
+  output.1 = "%"
+  target.1 = "$"
+
+  say " + TESTING '"path"'"
+  command = "cd TESTS/"path "&& cobc -x MAIN.CBL" args aargs
+  address system command WITH OUTPUT STEM output.
+  cobrc = rc
+  command = "cat TESTS/"path"/OUTPUT.TXT"
+  address system command WITH OUTPUT STEM target.
+  if output.1 = target.1 & cobrc = 0 then
+    say " + (x) TEST '"path"'"
+  else do
+    say " + ( ) TEST '"path"' #"cobrc
+    say "  >> OUTPUT:"
+    say "  >  "output.1
+    say "  << EXPECTED:"
+    say "  <  "target.1
+    say
+  end
+  return

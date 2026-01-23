@@ -14,7 +14,7 @@
                                        VALUE   IS "/tmp/STATUS-CBL-OUT".
        01 COMMAND-BODY                 PICTURE IS X(128).
        LINKAGE SECTION.
-       01 L-BODY                       PIC X(41).
+       01 L-BODY                       PIC X(42).
        PROCEDURE DIVISION USING L-BODY.
            STRING L-BODY DELIMITED BY SIZE " > "
              WS-TEMP-FILE INTO COMMAND-BODY

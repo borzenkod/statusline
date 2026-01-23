@@ -1,0 +1,1 @@
+{"full_text": "DATA","color": "#000000FF ","background": "#000000FF ","separator": false,"separator_block_width": 0,},

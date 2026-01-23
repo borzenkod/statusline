@@ -13,7 +13,7 @@
            10 BG-G                     PIC IS 9(3).
            10 BG-B                     PIC IS 9(3).
        01 L-PART              EXTERNAL PIC IS 9.
-       01 L-BODY              EXTERNAL PIC IS X(41).
+       01 L-BODY              EXTERNAL PIC IS X(42).
        01 L-COLOR-FG-LAST EXTERNAL.
          05 COLOR-HEX-FG-LAST          PIC IS X(8).
        01 L-COLOR-BG-LAST EXTERNAL.

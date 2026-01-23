@@ -14,7 +14,7 @@
            05 FILLER              PIC 9(2)   COMP.
 
        LINKAGE SECTION.
-       01 L-BODY                       PIC X(41).
+       01 L-BODY                       PIC X(42).
        PROCEDURE DIVISION USING L-BODY.
            CALL 'CBL_CHECK_FILE_EXIST' USING
                    L-BODY

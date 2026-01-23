@@ -23,7 +23,7 @@
        01 WS-PRINT-HUMAN-TYPE          PIC 9 VALUE 0.
        01 WS-BIT-SIZE                  PIC 99.
        LINKAGE SECTION.
-       01 L-BODY                  PIC X(41).
+       01 L-BODY                  PIC X(42).
        PROCEDURE DIVISION USING L-BODY.
            CALL 'statvfs' USING
                         BY REFERENCE L-BODY
