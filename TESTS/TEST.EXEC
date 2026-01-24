@@ -27,6 +27,7 @@ call test "DATE_003"          global_args "../../src/date_hook.cbl"
 call test "LOAD_001"          global_args "../../src/load_hook.cbl ./LOAD.CBL"
 call test "LOAD_002"          global_args "../../src/load_hook.cbl ./LOAD.CBL"
 call test "LOAD_003"          global_args "../../src/load_hook.cbl ./LOAD.CBL"
+call test "SPACE_001"         global_args "../../src/space.cbl"
 
 exit 0
 

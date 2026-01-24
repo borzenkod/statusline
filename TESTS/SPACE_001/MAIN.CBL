@@ -1,0 +1,15 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MAIN.
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 WS-BODY                      PIC IS X(42).
+       PROCEDURE DIVISION.
+           DISPLAY "!" WITH NO ADVANCING
+           END-DISPLAY
+           CALL 'DSPACEHOOK' USING WS-BODY
+           END-CALL
+           DISPLAY "!" WITH NO ADVANCING
+           END-DISPLAY
+           GOBACK.
