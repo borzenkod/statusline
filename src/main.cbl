@@ -40,10 +40,14 @@
          05 WS-THEME-TYPE              PIC IS X(4).
        01 WS-MODULE-TABLE.
          05 WS-MODULE  OCCURS 99 TIMES INDEXED BY MOD-IDX.
-           10 WS-MOD-POINTER           PROCEDURE-POINTER.
+           10 WS-MOD-POINTER           PIC IS X(16).
            10 WS-MOD-BODY              PIC IS X(42).
            10 WS-MOD-COLOR-BG          PIC IS X(10).
            10 WS-MOD-COLOR-FG          PIC IS X(10).
+           10 WS-MOD-VERSION           PIC IS 999 VALUE IS 0.
+       01 WS-MOD-DATA  OCCURS 99 TIMES.
+         05 WS-FILLER-1                PIC IS X(128) VALUE SPACES.
+         05 WS-POINTER REDEFINES WS-FILLER-1 PIC IS X(16).
        01 WS-MODULES-LOADED            PIC IS 99 VALUE 00.
        01 TMP-PTR                      PROCEDURE-POINTER.
       /
@@ -52,16 +56,12 @@
          05  WS-XDG-CONFIG-HOME        PIC X(256).
          05  WS-STATUSLINE-CONFIG      PIC X(256).
          05  WS-ONE-SHOT               PIC X VALUE 'N'.
-
-       01 WS-CALLBACK                  PROCEDURE-POINTER.
+       01 WS-TMP                       PIC IS X(32).
        01 WS-CLICK-EVENTS              PIC IS X(1024).
        01 WS-CRT-STATUS                PIC IS 9999.
            88 WS-CRT-NO-INPUT          VALUE IS 8000.
        01 WS-TALLY                     USAGE IS BINARY-LONG.
        01 WS-TYPE             EXTERNAL PIC IS 9 VALUE IS 0.
-       01 BAT-end-of-file     EXTERNAL PIC X VALUE 'N'.
-       01 MEM-end-of-file     EXTERNAL PIC X VALUE 'N'.
-
        01 TMP                          USAGE IS BINARY-LONG.
        01 HEX                          PIC IS XX.
        01 WS-IDX                       PIC IS 9.
@@ -75,7 +75,6 @@
          05 WS-COLOR-R                 PIC IS 999.
          05 WS-COLOR-G                 PIC IS 999.
          05 WS-COLOR-B                 PIC IS 999.
-
        COPY "COPYBOOKS/OUTPUT.CPY".
        COPY "COPYBOOKS/THEMES.CPY".
        PROCEDURE DIVISION.
@@ -88,6 +87,10 @@
        Initialize-Themes.
            COPY "COPYBOOKS/THEMES-INIT.CPY"..
        Find-Config-File.
+           ACCEPT WS-ONE-SHOT          FROM ENVIRONMENT
+             "STATLINE_DO_NOT_LOAD"
+           END-ACCEPT
+           IF WS-ONE-SHOT = "Y"        THEN GO TO Default-Config END-IF
            ACCEPT WS-HOME-DIR          FROM ENVIRONMENT"HOME"
            END-ACCEPT
            ACCEPT WS-XDG-CONFIG-HOME   FROM ENVIRONMENT"XDG_CONFIG_HOME"
@@ -158,8 +161,48 @@
                AT END SET WS-CONFIG-STATUS TO '10'
                NOT AT END PERFORM Process-Config-Line
              END-READ
-           END-PERFORM.
+           END-PERFORM
+           CLOSE CONFIG-FILE.
        Main.
+           PERFORM VARYING MOD-IDX FROM 1 BY 1
+               UNTIL MOD-IDX > WS-MODULES-LOADED
+             IF WS-TYPE = 1
+               MOVE WS-MOD-COLOR-FG(MOD-IDX)  TO WS-COLOR-HEX
+               MOVE WS-COLOR-R-HEX            TO HEX
+               PERFORM Hex2TMP
+               MOVE TMP                       TO WS-COLOR-R
+               MOVE WS-COLOR-G-HEX            TO HEX
+               PERFORM Hex2TMP
+               MOVE TMP                       TO WS-COLOR-G
+               MOVE WS-COLOR-B-HEX            TO HEX
+               PERFORM Hex2TMP
+               MOVE TMP                       TO WS-COLOR-B
+               MOVE WS-COLOR                  TO
+                               WS-MOD-COLOR-FG(MOD-IDX)
+               IF WS-MOD-COLOR-FG(MOD-IDX)(1:9) NOT = ZEROS
+                 MOVE '1'              TO WS-MOD-COLOR-FG(MOD-IDX)(10:1)
+               ELSE
+                 MOVE '0'              TO WS-MOD-COLOR-FG(MOD-IDX)(10:1)
+               END-IF
+               MOVE WS-MOD-COLOR-BG(MOD-IDX)  TO WS-COLOR-HEX
+               MOVE WS-COLOR-R-HEX            TO HEX
+               PERFORM Hex2TMP
+               MOVE TMP                       TO WS-COLOR-R
+               MOVE WS-COLOR-G-HEX            TO HEX
+               PERFORM Hex2TMP
+               MOVE TMP                       TO WS-COLOR-G
+               MOVE WS-COLOR-B-HEX            TO HEX
+               PERFORM Hex2TMP
+               MOVE TMP                       TO WS-COLOR-B
+               MOVE WS-COLOR                  TO 
+                              WS-MOD-COLOR-BG(MOD-IDX)
+               IF WS-MOD-COLOR-BG(MOD-IDX)(1:9) NOT = ZEROS
+                 MOVE '1'              TO WS-MOD-COLOR-BG(MOD-IDX)(10:1)
+               ELSE
+                 MOVE '0'              TO WS-MOD-COLOR-BG(MOD-IDX)(10:1)
+               END-IF
+             END-IF
+           END-PERFORM
            ACCEPT WS-ONE-SHOT FROM ENVIRONMENT "STATLINE_ONESHOT"
            END-ACCEPT
            IF WS-ONE-SHOT NOT = "Y"
@@ -171,7 +214,9 @@
              SET WS-UPDATE-INTERVAL    TO 0
            END-IF
            SET L-TYPE                  TO WS-TYPE
-           SET L-TEXT                  TO NULL
+           SET L-TEXT                  TO SPACES
+           SET L-TEXT-VERSION          TO 0
+           SET L-DATA                  TO NULL
            SET L-COLOR-BG              TO '000000000'
            SET L-COLOR-FG              TO '000000000'
            SET L-PART                  TO 1
@@ -181,8 +226,6 @@
            PERFORM LoopInner UNTIL WS-ONE-SHOT NOT = "N"
            STOP RUN.
        LoopInner.
-           MOVE 'N' TO BAT-end-of-file
-           MOVE 'N' TO MEM-end-of-file
            SET L-PART                  TO 2
            CALL 'OUTPUT_FMT'
            END-CALL
@@ -194,18 +237,21 @@
            PERFORM VARYING MOD-IDX FROM 1 BY 1
                UNTIL MOD-IDX > WS-MODULES-LOADED
                SET L-TEXT                  TO WS-MOD-POINTER(MOD-IDX)
+               SET L-TEXT-VERSION          TO WS-MOD-VERSION(MOD-IDX)
+               SET L-DATA               TO ADDRESS WS-MOD-DATA(MOD-IDX)
                SET L-COLOR-BG              TO WS-MOD-COLOR-BG(MOD-IDX)
                SET L-COLOR-FG              TO WS-MOD-COLOR-FG(MOD-IDX)
                SET L-BODY                  TO WS-MOD-BODY(MOD-IDX)
-               CALL 'OUTPUT_FMT'
-               END-CALL
+               EVALUATE L-TEXT-VERSION
+                 WHEN 3 THRU 4 CALL L-TEXT USING BY VALUE L-DATA 
+                   END-CALL
+                 WHEN OTHER CALL 'OUTPUT_FMT' END-CALL
+               END-EVALUATE
            END-PERFORM
-
            IF WS-CRT-NO-INPUT
              ACCEPT WS-CLICK-EVENTS
              END-ACCEPT
            END-IF
-
            SET L-PART                  TO 4
            CALL 'OUTPUT_FMT'
            END-CALL
@@ -234,85 +280,34 @@
            END-EVALUATE
            EXIT PARAGRAPH.
        Process-Module.
-           COMPUTE WS-MODULES-LOADED = WS-MODULES-LOADED + 1
+           COMPUTE WS-MODULES-LOADED   = WS-MODULES-LOADED + 1
            END-COMPUTE
-           COMPUTE MOD-IDX           = MOD-IDX + 1
+           COMPUTE MOD-IDX             = MOD-IDX + 1
            END-COMPUTE
-           SET WS-MOD-BODY(MOD-IDX)         TO WS-CONFIG-BODY.
-           EVALUATE WS-CONFIG-NAME
-             WHEN "BATTERY"
-               SET HEX                     TO WS-MOD-BODY(MOD-IDX)(42:1)
-               SET WS-MOD-BODY(MOD-IDX)(42:1) TO SPACE
-               INSPECT WS-MOD-BODY(MOD-IDX) 
-                        REPLACING TRAILING SPACES BY X'00'
-               SET WS-MOD-BODY(MOD-IDX)(42:1) TO HEX
-               SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DBATTHOOK'
-             WHEN "MEMORY"
-               SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DMEMHOOK'
-             WHEN "LOAD"
-               SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DLOADHOOK'
-             WHEN "DATE"
-               SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DDATEHOOK'
-             WHEN "TIME"
-               SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DTIMEHOOK'
-             WHEN "SYSTEM"
-               SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DSYSHOOK'
-             WHEN "SEPARATOR"
-               SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DSEPHOOK'
-             WHEN "TEXT"
-               SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DTEXTHOOK'
-             WHEN "SPACE"
-               SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DSPACEHOOK'
-             WHEN "PATH"
-               SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DPATHHOOK'
-             WHEN "TAPE"
-               SET HEX                     TO WS-MOD-BODY(MOD-IDX)(42:1)
-               SET WS-MOD-BODY(MOD-IDX)(42:1) TO SPACE
-               INSPECT WS-MOD-BODY(MOD-IDX) 
-                        REPLACING TRAILING SPACES BY X'00'
-               SET WS-MOD-BODY(MOD-IDX)(40:1) TO HEX
-               SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DTAPEHOOK'
-             WHEN OTHER
-               DISPLAY "MODULE: " QUOTE WS-CONFIG-NAME QUOTE
-                       "NOT FOUND" END-DISPLAY
-               SET WS-MOD-POINTER(MOD-IDX) TO ENTRY 'DTIMEHOOK'
+           STRING "MOD_"               DELIMITED BY SIZE
+                  WS-CONFIG-NAME       DELIMITED BY SPACE
+                  INTO                 WS-MOD-POINTER(MOD-IDX)
+           END-STRING
+           SET WS-MOD-BODY(MOD-IDX)    TO WS-CONFIG-BODY.
+           STRING "MOD_"               DELIMITED BY SIZE
+                  WS-CONFIG-NAME       DELIMITED BY SPACE
+                  "_INIT"              DELIMITED BY SIZE
+                  INTO                 WS-TMP
+           END-STRING
+           SET L-BODY                  TO WS-CONFIG-BODY
+           CALL WS-TMP USING BY REFERENCE WS-MOD-DATA(MOD-IDX)
+             GIVING WS-MOD-VERSION(MOD-IDX)
+             ON EXCEPTION
+               DISPLAY
+                 "(S806): PROGRAM NOT FOUND" QUOTE WS-TMP QUOTE
+               END-DISPLAY
                CONTINUE
-           END-EVALUATE
-           COPY "COPYBOOKS/GET-THEME.CPY".
-           IF WS-TYPE = 1
-             MOVE WS-MOD-COLOR-FG(MOD-IDX)  TO WS-COLOR-HEX
-             MOVE WS-COLOR-R-HEX            TO HEX
-             PERFORM Hex2TMP
-             MOVE TMP                       TO WS-COLOR-R
-             MOVE WS-COLOR-G-HEX            TO HEX
-             PERFORM Hex2TMP
-             MOVE TMP                       TO WS-COLOR-G
-             MOVE WS-COLOR-B-HEX            TO HEX
-             PERFORM Hex2TMP
-             MOVE TMP                       TO WS-COLOR-B
-             MOVE WS-COLOR                  TO WS-MOD-COLOR-FG(MOD-IDX)
-             IF WS-MOD-COLOR-FG(MOD-IDX)(1:9) NOT = ZEROS
-               MOVE '1'                TO WS-MOD-COLOR-FG(MOD-IDX)(10:1)
-             ELSE
-               MOVE '0'                TO WS-MOD-COLOR-FG(MOD-IDX)(10:1)
-             END-IF
-             MOVE WS-MOD-COLOR-BG(MOD-IDX)  TO WS-COLOR-HEX
-             MOVE WS-COLOR-R-HEX            TO HEX
-             PERFORM Hex2TMP
-             MOVE TMP                       TO WS-COLOR-R
-             MOVE WS-COLOR-G-HEX            TO HEX
-             PERFORM Hex2TMP
-             MOVE TMP                       TO WS-COLOR-G
-             MOVE WS-COLOR-B-HEX            TO HEX
-             PERFORM Hex2TMP
-             MOVE TMP                       TO WS-COLOR-B
-             MOVE WS-COLOR                  TO WS-MOD-COLOR-BG(MOD-IDX)
-             IF WS-MOD-COLOR-BG(MOD-IDX)(1:9) NOT = ZEROS
-               MOVE '1'                TO WS-MOD-COLOR-BG(MOD-IDX)(10:1)
-             ELSE
-               MOVE '0'                TO WS-MOD-COLOR-BG(MOD-IDX)(10:1)
-             END-IF
+           END-CALL
+           SET WS-TMP                  TO SPACES
+           IF WS-MOD-VERSION(MOD-IDX) IS EQUAL TO 4
+             MOVE WS-POINTER(MOD-IDX) TO WS-MOD-POINTER(MOD-IDX)
            END-IF
+           COPY "COPYBOOKS/GET-THEME.CPY".
            EXIT PARAGRAPH.
        Hex2TMP.
            MOVE 0 TO TMP
@@ -339,3 +334,14 @@
        PROCEDURE DIVISION.
            GOBACK.
        END PROGRAM SIGUSR1.
+       END PROGRAM MAIN.
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. STATABEND.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       COPY "COPYBOOKS/ABEND.CPY".
+       COPY "COPYBOOKS/OUTPUT.CPY".
+       PROCEDURE DIVISION.
+           DISPLAY WS-STAT-ABEND END-DISPLAY
+           STOP RUN RETURNING 4.
+       END PROGRAM STATABEND.

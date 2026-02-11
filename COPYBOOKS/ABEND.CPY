@@ -1,0 +1,1 @@
+       01 WS-STAT-ABEND       EXTERNAL PICTURE IS X(8).

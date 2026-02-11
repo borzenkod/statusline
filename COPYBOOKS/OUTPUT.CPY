@@ -1,5 +1,7 @@
        01 L-TYPE              EXTERNAL PIC IS 9.
-       01 L-TEXT              EXTERNAL PROCEDURE-POINTER.
+       01 L-TEXT              EXTERNAL PIC IS X(16).
+       01 L-TEXT-VERSION      EXTERNAL PIC IS 999.
+       01 L-DATA              EXTERNAL USAGE POINTER.
        01 L-COLOR-FG          EXTERNAL.
          05 COLOR-HEX-FG               PIC IS X(10).
          05 COLOR-RGB-FG     REDEFINES COLOR-HEX-FG.
@@ -20,4 +22,3 @@
          05 COLOR-HEX-FG-LAST          PIC IS X(10).
        01 L-COLOR-BG-LAST EXTERNAL.
          05 COLOR-HEX-BG-LAST          PIC IS X(10).
-

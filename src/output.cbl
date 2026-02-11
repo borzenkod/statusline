@@ -38,8 +38,7 @@
            EXIT PARAGRAPH.
        Body.
            PERFORM BodyHeader
-           CALL L-TEXT USING L-BODY
-           END-CALL
+           PERFORM CallText
            PERFORM BodyFooter
            SET COLOR-HEX-BG-LAST       TO COLOR-HEX-BG
            SET COLOR-HEX-FG-LAST       TO COLOR-HEX-FG
@@ -94,3 +93,25 @@
            DISPLAY X'1B' "[0m" WITH NO ADVANCING
            END-DISPLAY
            EXIT PARAGRAPH.
+       CallText.
+           EVALUATE L-TEXT-VERSION
+             WHEN 0 THRU 1 CALL L-TEXT
+               USING BY REFERENCE L-BODY
+               ON EXCEPTION PERFORM CallTextHandleError
+             END-CALL
+             WHEN 2 CALL L-TEXT
+               USING BY VALUE L-DATA
+               ON EXCEPTION PERFORM CallTextHandleError
+             END-CALL
+             WHEN OTHER CONTINUE
+           END-EVALUATE
+           EXIT PARAGRAPH.
+       CallTextHandleError.
+           DISPLAY
+             "FAILED TO LOAD MODULE: '"
+             L-TEXT
+             "'"
+             WITH NO ADVANCING
+           END-DISPLAY
+           EXIT PARAGRAPH.
+       END PROGRAM OUTPUT_FMT.

@@ -5,7 +5,7 @@ args = args "-O3"
 args = args "-fsign=ebcdic"
 args = args "-fdefault-colseq=ebcdic"
 args = args "-febcdic-table=ebcdic500_latin1"
-args = args "-fstatic-call"
+args = args "-fstatic-call -static"
 args = args "-fnotrunc"
 args = args "-farithmetic-osvs"
 args = args "-W -Wno-possible-truncate"
@@ -14,18 +14,20 @@ args = args "-I .."
 args = args "-Werror"
 
 main_file = "../src/main.cbl"
-files = "../src/output.cbl ../src/auto-detect.cbl"
-files = files "../src/time_hook.cbl"
-files = files "../src/date_hook.cbl"
-files = files "../src/load_hook.cbl"
-files = files "../src/mem_hook.cbl"
-files = files "../src/batt_hook.cbl"
-files = files "../src/system_hook.cbl"
-files = files "../src/text.cbl"
-files = files "../src/separator.cbl"
-files = files "../src/space.cbl"
-files = files "../src/path.cbl"
-files = files "../src/tape.cbl"
+files.0   = 13
+files.1   = "../src/output.cbl"
+files.2   = "../src/auto-detect.cbl"
+files.3   = "../src/modules/time.cbl"
+files.4   = "../src/modules/date.cbl"
+files.5   = "../src/modules/load.cbl"
+files.6   = "../src/modules/memory.cbl"
+files.7   = "../src/modules/battery.cbl"
+files.8   = "../src/modules/system.cbl"
+files.9   = "../src/modules/text.cbl"
+files.10  = "../src/modules/separator.cbl"
+files.11  = "../src/modules/space.cbl"
+files.12  = "../src/modules/path.cbl"
+files.13  = "../src/modules/tape.cbl"
 
 arg command other
 if command = "" then command = "COMPILE"
@@ -33,20 +35,45 @@ if command = "" then command = "COMPILE"
 select
   when command = "COMPILE" then do
       command = "mkdir -p build"
-      SAY ' +' command
+      SAY ' STEP01 ===> ' command
       command
-      command = "cd build && cobc" args "-x" main_file files
-      SAY ' +' command
+      command = "./generate_copybooks.sh"
+      SAY ' STEP02 ===> ' command ' INTO ./COPYBOOKS/LIBC.CPY'
       command
-
-      cobrc = rc
-      if cobrc != 0 then do
-      say "Compile failed, RC=" rc
-      exit rc
+      command = "gcc -c ./helper.c -o build/binops.o "
+      SAY ' STEP03 ===> ' command
+      command
+      objects = "main.o"
+      command = "cobc " args "-c -x" main_file "-o" "main.o"
+      "cd build && "command
+      do i = 1 to files.0
+        command = "cobc " args "-c " files.i "-o" "o"i".o"
+        out = ""(i + 3)
+        if i < 7 then out = "0"out
+        SAY " STEP"out "===> " command
+        "cd build && "command
+        if RC = 0 then 
+          do
+          end
+        else
+          do
+            say "Compile failed, RC=" RC
+            exit RC
+          end
+        SAY RC
+        objects = objects "o"i".o"
       end
 
-      command = "cp ./build/main ."
-      SAY ' +' command
+      SAY " STEPCOMP ===> "
+      command = "cob-config --libs"
+      SAY "    ===> " command
+      address system command WITH OUTPUT STEM target.
+      command = "cobc -x binops.o" args objects " -o statusline"
+      SAY "    ===> " command
+      "cd build && "command
+
+      command = "cp ./build/statusline ."
+      SAY ' FINAL ===> ' command
       command
     end
   when command = "TEST" then do
