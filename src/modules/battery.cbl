@@ -73,7 +73,6 @@
          05 L-TRIES                    PICTURE IS 9.
          05 L-MAX-TRIES                PICTURE IS 9.
        PROCEDURE DIVISION USING BY REFERENCE L-BAT-DATA.
-           DISPLAY L-BAT-DATA END-DISPLAY
            SET L-DATA-TYPE             TO L-BODY(42:1)
            SET L-BODY(42:1)            TO SPACE
            MOVE L-BODY                 TO L-DATA-PATH

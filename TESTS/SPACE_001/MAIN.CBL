@@ -8,7 +8,7 @@
        PROCEDURE DIVISION.
            DISPLAY "!" WITH NO ADVANCING
            END-DISPLAY
-           CALL 'DSPACEHOOK' USING WS-BODY
+           CALL 'MOD_SPACE' USING WS-BODY
            END-CALL
            DISPLAY "!" WITH NO ADVANCING
            END-DISPLAY

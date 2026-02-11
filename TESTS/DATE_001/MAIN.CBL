@@ -28,11 +28,14 @@
            10  WS-CURRENT-SECOND  PIC  9(2).
            10  WS-CURRENT-MS      PIC  9(2).
         05  WS-DIFF-FROM-GMT      PIC S9(4).
-       01 WS-BODY                      PIC IS X(42).
+       01 L-BODY              EXTERNAL PIC IS X(42).
+       01 WS-DATA                      PIC IS X(128).
        PROCEDURE DIVISION.
            MOVE FUNCTION CURRENT-DATE TO WS-CURRENT-DATE-FIELDS
-           MOVE "Y2K"           TO WS-BODY
-           CALL 'DDATEHOOK' USING WS-BODY
+           MOVE "Y2K"           TO L-BODY
+           CALL 'MOD_DATE_INIT' USING WS-DATA
+           END-CALL
+           CALL 'MOD_DATE' USING WS-DATA
            END-CALL
            OPEN OUTPUT OUTP
            MOVE WS-CURRENT-DAY         TO FD-DATA-DAY

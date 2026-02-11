@@ -8,7 +8,7 @@ args = args "-febcdic-table=ebcdic500_latin1"
 args = args "-fstatic-call -static"
 args = args "-fnotrunc"
 args = args "-farithmetic-osvs"
-args = args "-W -Wno-possible-truncate"
+args = args "-W -Wno-possible-truncate -Wno-call-params"
 args = args "-I .."
 
 args = args "-Werror"

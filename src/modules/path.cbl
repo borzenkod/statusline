@@ -30,7 +30,7 @@
            IF L-TRIES IS GREATER OR EQUAL TO L-MAX-TRIES THEN
              SET L-TRIES               TO 1
              CALL 'CBL_CHECK_FILE_EXIST' USING
-               L-DATA
+               L-BODY
                FILE-INFO
                RETURNING TMP
              END-CALL
@@ -71,6 +71,6 @@
            SET L-MAX-TRIES             TO 15
            SET RETURN-CODE             TO 2
            SET L-BODY-DATA             TO L-BODY
-           SET TMP                     TO 1
+           SET TMP                     TO 0
            GOBACK.
        END PROGRAM MOD_PATH_INIT.
