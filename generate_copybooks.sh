@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 temp_header=$(mktemp)
 temp_output=$(mktemp)

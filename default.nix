@@ -13,10 +13,11 @@
 
   buildPhase = ''
     rexx ./TESTS/TEST.EXEC
+    ./generate_copybooks.sh COPYBOOKS/LIBC.CPY
     rexx BUILD.EXEC
   '';
   installPhase = ''
     mkdir -p $out/bin
-    cp main $out/bin/status
+    cp statusline $out/bin/status
   '';
 }
