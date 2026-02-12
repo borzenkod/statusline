@@ -3,6 +3,6 @@ statusline
 MAIN
 build/
 result
-./COPYBOOKS/LIBC.CPY
-./test.out
-result*/
+COPYBOOKS/LIBC.CPY
+test.out
+result*
