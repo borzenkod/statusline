@@ -1,0 +1,77 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. "WTO$INIT".
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       COPY "COPYBOOKS/LIBC.CPY".
+       PROCEDURE DIVISION.
+           CALL 'openlog' USING
+             Z"STATUSLINE-COB WTO"
+             BY VALUE LC-LOG_CONS
+             BY VALUE LC-LOG_DAEMON
+           END-CALL
+           CALL 'WTO$DEBUG' USING BY REFERENCE Z"WTO INIT" END-CALL
+           GOBACK.
+       END PROGRAM "WTO$INIT".
+      /
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. "WTO$DEBUG".
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       COPY "COPYBOOKS/LIBC.CPY".
+       LINKAGE SECTION.
+       01 L-MESSAGE                    PICTURE IS X(40).
+       PROCEDURE DIVISION USING L-MESSAGE.
+           CALL 'syslog' USING
+             BY VALUE LC-LOG_DEBUG
+             BY REFERENCE Z"%s"
+             BY REFERENCE L-MESSAGE
+           END-CALL
+           GOBACK.
+       END PROGRAM "WTO$DEBUG".
+      /
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. "WTO$INFO".
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       COPY "COPYBOOKS/LIBC.CPY".
+       LINKAGE SECTION.
+       01 L-MESSAGE                    PICTURE IS X(40).
+       PROCEDURE DIVISION USING L-MESSAGE.
+           CALL 'syslog' USING
+             BY VALUE LC-LOG_NOTICE
+             BY REFERENCE Z"%s"
+             BY REFERENCE L-MESSAGE
+           END-CALL
+           GOBACK.
+       END PROGRAM "WTO$INFO".
+      /
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. "WTO$WARN".
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       COPY "COPYBOOKS/LIBC.CPY".
+       LINKAGE SECTION.
+       01 L-MESSAGE                    PICTURE IS X(40).
+       PROCEDURE DIVISION USING L-MESSAGE.
+           CALL 'syslog' USING
+             BY VALUE LC-LOG_WARNING
+             BY REFERENCE Z"%s"
+             BY REFERENCE L-MESSAGE
+           END-CALL
+           GOBACK.
+       END PROGRAM "WTO$WARN".
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. "WTO$ERR".
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       COPY "COPYBOOKS/LIBC.CPY".
+       LINKAGE SECTION.
+       01 L-MESSAGE                    PICTURE IS X(40).
+       PROCEDURE DIVISION USING L-MESSAGE.
+           CALL 'syslog' USING
+             BY VALUE LC-LOG_ERR
+             BY REFERENCE Z"%s"
+             BY REFERENCE L-MESSAGE
+           END-CALL
+           GOBACK.
+       END PROGRAM "WTO$ERR".

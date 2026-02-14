@@ -79,7 +79,8 @@
        COPY "COPYBOOKS/THEMES.CPY".
        PROCEDURE DIVISION.
        Initialize-Program.
-           CALL 'AUTO-DETECT' USING BY REFERENCE WS-TYPE END-CALL.
+           CALL 'AUTO-DETECT' USING BY REFERENCE WS-TYPE END-CALL
+           CALL 'WTO$INIT' END-CALL.
        Initialize-Config.
            SET WS-UPDATE-INTERVAL      TO 5
            SET WS-THEME-NAME           TO "ROSEPINE"
@@ -91,6 +92,7 @@
              "STATLINE_DO_NOT_LOAD"
            END-ACCEPT
            IF WS-ONE-SHOT = "Y"        THEN GO TO Default-Config END-IF
+           CALL 'WTO$DEBUG' USING "LOCATING CFGLIB" END-CALL.
            ACCEPT WS-HOME-DIR          FROM ENVIRONMENT"HOME"
            END-ACCEPT
            ACCEPT WS-XDG-CONFIG-HOME   FROM ENVIRONMENT"XDG_CONFIG_HOME"
@@ -213,6 +215,11 @@
            ELSE
              SET WS-UPDATE-INTERVAL    TO 0
            END-IF
+           CALL 'WTO$INFO' USING "LOADED WITH" END-CALL
+           CALL 'WTO$INFO' USING "MODULES" END-CALL
+           CALL 'WTO$INFO' USING WS-MODULES-LOADED END-CALL
+           CALL 'WTO$INFO' USING "GLOBAL" END-CALL
+           CALL 'WTO$INFO' USING WS-GENERAL-CONFIG END-CALL
            SET L-TYPE                  TO WS-TYPE
            SET L-TEXT                  TO SPACES
            SET L-TEXT-VERSION          TO 0
