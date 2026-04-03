@@ -1,6 +1,6 @@
 #!/usr/bin/env rexx
 
-args = "-std=ibm -ftrace -g"
+args = "-ftrace -g"
 args = args "-O3"
 args = args "-fsign=ebcdic"
 args = args "-fdefault-colseq=ebcdic"
@@ -8,13 +8,13 @@ args = args "-febcdic-table=ebcdic500_latin1"
 args = args "-fstatic-call -static"
 args = args "-fnotrunc"
 args = args "-farithmetic-osvs"
-args = args "-W -Wno-possible-truncate -Wno-call-params"
+args = args "-W -Wno-possible-truncate -Wno-call-params -Wno-obsolete -Wno-overlap"
 args = args "-I .."
 
 args = args "-Werror"
 
 main_file = "../src/main.cbl"
-files.0   = 13
+files.0   = 16
 files.1   = "../src/output.cbl"
 files.2   = "../src/wto.cbl"
 files.3   = "../src/auto-detect.cbl"
@@ -29,6 +29,8 @@ files.11  = "../src/modules/separator.cbl"
 files.12  = "../src/modules/space.cbl"
 files.13  = "../src/modules/path.cbl"
 files.14  = "../src/modules/tape.cbl"
+files.15  = "../src/STATLN02.cbl"
+files.16  = "../src/STATLN03.cbl"
 
 arg command other
 if command = "" then command = "COMPILE"
@@ -41,7 +43,7 @@ select
       command = "./generate_copybooks.sh"
       SAY ' STEP02 ===> ' command ' INTO ./COPYBOOKS/LIBC.CPY'
       command
-      command = "gcc -c ./helper.c -o build/binops.o "
+      command = "gcc -c -g ./helper.c -o build/binops.o "
       SAY ' STEP03 ===> ' command
       command
       objects = "main.o"

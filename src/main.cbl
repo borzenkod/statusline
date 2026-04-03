@@ -262,6 +262,8 @@
            SET L-PART                  TO 4
            CALL 'OUTPUT_FMT'
            END-CALL
+           CALL 'STATLN02'
+           END-CALL
            CALL 'sleep' USING BY VALUE WS-UPDATE-INTERVAL
            END-CALL
            EXIT PARAGRAPH.
