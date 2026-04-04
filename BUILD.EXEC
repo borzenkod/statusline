@@ -14,7 +14,7 @@ args = args "-I .."
 args = args "-Werror"
 
 main_file = "../src/main.cbl"
-files.0   = 16
+files.0   = 17
 files.1   = "../src/output.cbl"
 files.2   = "../src/wto.cbl"
 files.3   = "../src/auto-detect.cbl"
@@ -31,6 +31,7 @@ files.13  = "../src/modules/path.cbl"
 files.14  = "../src/modules/tape.cbl"
 files.15  = "../src/STATLN02.cbl"
 files.16  = "../src/STATLN03.cbl"
+files.17  = "../MODLIB/STATUS.C"
 
 arg command other
 if command = "" then command = "COMPILE"

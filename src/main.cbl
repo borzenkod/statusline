@@ -61,7 +61,7 @@
        01 WS-CRT-STATUS                PIC IS 9999.
            88 WS-CRT-NO-INPUT          VALUE IS 8000.
        01 WS-TALLY                     USAGE IS BINARY-LONG.
-       01 WS-TYPE             EXTERNAL PIC IS 9 VALUE IS 0.
+       01 WS-TYPE             EXTERNAL PIC IS 9.
        01 TMP                          USAGE IS BINARY-LONG.
        01 HEX                          PIC IS XX.
        01 WS-IDX                       PIC IS 9.
