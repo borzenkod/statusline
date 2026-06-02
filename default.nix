@@ -1,6 +1,6 @@
 {
-  pkgs,
-  stdenv,
+  pkgs ? import <nixpkgs> {},
+  stdenv ? pkgs.stdenv,
 }: stdenv.mkDerivation {
   name = "status";
   buildInputs = with pkgs; [
